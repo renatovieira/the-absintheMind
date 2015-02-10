@@ -3,7 +3,7 @@ from flask import Flask, jsonify
 from country import Country
 from city import City
 from address import Address
-from costumer import Costumer
+from customer import Customer
 
 app = Flask(__name__)
 app.config["DEBUG"] = True  # Only include this while you are testing your app
@@ -24,9 +24,9 @@ addresses = [
     Address(4, '230 North Michigan Avenue', '', 'Chicago', 60601, 4, 1)
 ]
 
-costumers = [
-    Costumer(1, 1, 'Renato', 'Nishimori', 1, 1, True, None),
-    Costumer(2, 2, 'Renato', 'Brazil', 3, 3, True, None)
+customers = [
+    Customer(1, 1, 'Renato', 'Nishimori', 1, 1, True, None),
+    Customer(2, 2, 'Renato', 'Brazil', 3, 3, True, None)
 ]
 
 #Country
@@ -97,36 +97,36 @@ def find_addresses_by_city(city_id):
     filtered_addresses = [address for address in addresses if address.city_id==city_id]
     return filtered_addresses
 
-#Costumer
+#Customer
 
-@app.route('/costumers', methods=['GET'])
-def get_costumers():
-    return jsonify(costumers=[costumer.serialize() for costumer in costumers])
+@app.route('/customers', methods=['GET'])
+def get_customers():
+    return jsonify(customers=[customer.serialize() for customer in customers])
 
-@app.route('/costumers/country/<int:country_id>', methods=['GET'])
-def get_costumers_by_country(country_id):
-    return jsonify(costumers=[costumer.serialize() for costumer in find_costumers_by_country(country_id)])
+@app.route('/customers/country/<int:country_id>', methods=['GET'])
+def get_customers_by_country(country_id):
+    return jsonify(customers=[customer.serialize() for customer in find_customers_by_country(country_id)])
 
-@app.route('/costumers/city/<int:city_id>', methods=['GET'])
-def get_costumers_by_city(city_id):
-    return jsonify(costumers=[costumer.serialize() for costumer in find_costumers_by_city(city_id)])
+@app.route('/customers/city/<int:city_id>', methods=['GET'])
+def get_customers_by_city(city_id):
+    return jsonify(customers=[customer.serialize() for customer in find_customers_by_city(city_id)])
 
-def find_costumers_in_addresses(addresses):
-    filtered_costumers = []
-    for costumer in costumers:
+def find_customers_in_addresses(addresses):
+    filtered_customers = []
+    for customer in customers:
         for address in addresses:
-            if costumer.address_id == address.id:
-                filtered_costumers.append(costumer)
+            if customer.address_id == address.id:
+                filtered_customers.append(customer)
                 break
-    return filtered_costumers
+    return filtered_customers
 
-def find_costumers_by_country(country_id):
+def find_customers_by_country(country_id):
     filtered_addresses = find_addresses_by_country(country_id)
-    return find_costumers_in_addresses(filtered_addresses)
+    return find_customers_in_addresses(filtered_addresses)
 
-def find_costumers_by_city(city_id):
+def find_customers_by_city(city_id):
     filtered_addresses = find_addresses_by_city(city_id)
-    return find_costumers_in_addresses(filtered_addresses)
+    return find_customers_in_addresses(filtered_addresses)
 
 
 

@@ -1,4 +1,4 @@
-class Costumer:
+class Customer:
     def __init__(self, id, stored_id, first_name, last_name, email_id, address_id, active, create_date, last_update=None):
         self.id = id
         self.store_id = stored_id
