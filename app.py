@@ -29,6 +29,10 @@ addresses = [
 def get_countries():
     return jsonify(countries=[country.serialize() for country in countries])
 
+@app.route('/countries', methods=['POST'])
+def post_countries():
+    return jsonify(countries=[country.serialize() for country in countries])
+
 #City
 
 @app.route('/cities', methods=['GET'])
@@ -55,6 +59,7 @@ def get_addresses_by_country(country_id):
 def get_cities_by_city(city_id):
     filtered_addresses = [address for address in addresses if address.city_id==city_id]
     return jsonify(addresses=[address.serialize() for address in filtered_addresses])
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0")
