@@ -35,18 +35,15 @@ costumers = [
 def get_countries():
     return jsonify(countries=[country.serialize() for country in countries])
 
-<<<<<<< HEAD
 @app.route('/countries', methods=['POST'])
 def post_countries():
     return jsonify(countries=[country.serialize() for country in countries])
-=======
 
 def find_country_by_id(country_id):
     for country in countries:
         if country.id == country_id:
             return country
     return None
->>>>>>> 75ffe6b00b41a12254a43055d0bee5037c7bb2fc
 
 #City
 
