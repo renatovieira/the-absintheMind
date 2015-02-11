@@ -4,6 +4,7 @@ from country import Country
 from city import City
 from address import Address
 from customer import Customer
+import pymysql
 
 app = Flask(__name__)
 app.config["DEBUG"] = True  # Only include this while you are testing your app
@@ -29,14 +30,33 @@ customers = [
     Customer(2, 2, 'Renato', 'Brazil', 3, 3, True, None)
 ]
 
+
+#mysql cursors and pointers
+# should modify this to match the specific database configuration you have
+conn = pymysql.connect(host='localhost', user='root', passwd='', db='absinthe')
+cur = conn.cursor()
+
+#mysql functions
+def conn_db():
+    conn = pymysql.connect(host='localhost', user='root', passwd='', db='absinthe')
+    return conn.cursor()
+
+def close_db(c):
+    c.connection.close()
+    c.close()
+
+
+
+
 #Country
 
 @app.route('/countries', methods=['GET'])
 def get_countries():
+    cur.execute("SELECT * FROM COUNTRY")
     return jsonify(countries=[country.serialize() for country in countries])
 
-@app.route('/countries', methods=['POST'])
-def post_countries():
+@app.route('/countries/<int:country_id>', methods=['DELETE'])
+def del_countries():
     return jsonify(countries=[country.serialize() for country in countries])
 
 def find_country_by_id(country_id):
