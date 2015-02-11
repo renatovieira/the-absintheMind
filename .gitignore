@@ -59,3 +59,5 @@ flask/
 .vagrant/
 Vagrantfile
 bootstrap.sh
+
+db_config

@@ -4,6 +4,7 @@ from country import Country
 from city import City
 from address import Address
 from customer import Customer
+from conf import *
 import pymysql
 
 app = Flask(__name__)
@@ -30,23 +31,22 @@ customers = [
     Customer(2, 2, 'Renato', 'Brazil', 3, 3, True, None)
 ]
 
+#database configuration reading functions
+host, user, password, database = read_db_conf()
 
 #mysql cursors and pointers
 # should modify this to match the specific database configuration you have
-conn = pymysql.connect(host='localhost', user='root', passwd='', db='absinthe')
+conn = pymysql.connect(host=host, user=user, passwd=password, db=database)
 cur = conn.cursor()
 
 #mysql functions
 def conn_db():
-    conn = pymysql.connect(host='localhost', user='root', passwd='', db='absinthe')
+    conn = pymysql.connect(host=host, user=user, passwd=passowrd, db=database)
     return conn.cursor()
 
 def close_db(c):
     c.connection.close()
     c.close()
-
-
-
 
 #Country
 
