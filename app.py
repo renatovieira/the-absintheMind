@@ -5,6 +5,7 @@ from city import City
 from address import Address
 from customer import Customer
 import pymysql
+import pdb
 
 app = Flask(__name__)
 app.config["DEBUG"] = True  # Only include this while you are testing your app
@@ -56,7 +57,9 @@ def get_countries():
     return jsonify(countries=[country.serialize() for country in countries])
 
 @app.route('/countries/<int:country_id>', methods=['DELETE'])
-def del_countries():
+def del_country_by_id(country_id):
+    #resolve foreign key issue
+    cur.execute("DELETE FROM COUNTRY WHERE CountryID={0}".format(country_id))
     return jsonify(countries=[country.serialize() for country in countries])
 
 def find_country_by_id(country_id):
@@ -75,6 +78,13 @@ def get_cities():
 def get_cities_by_country(country_id):
     return jsonify(cities=[city.serialize() for city in find_cities_by_country(country_id)])
 
+@app.route('/cities/<int:city_id>', methods=['DELETE'])
+def delete_city_by_id(city_id):
+    cur.execute("SELECT * FROM CITY WHERE CityID={0}".format(city_id))
+    temp = cur.fetchone()
+    cur.execute("DELETE FROM CITY WHERE CityID={0}".format(city_id))
+    conn.commit()
+    return "deleted the following row: {0}".format(temp)
 
 def find_city_by_id(city_id):
     for city in cities:
