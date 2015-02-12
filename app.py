@@ -19,12 +19,6 @@ def get_countries():
 def del_country_by_id(country_id):
     return dao.delete_country_by_id(country_id)
 
-def find_country_by_id(country_id):
-    for country in countries:
-        if country.id == country_id:
-            return country
-    return None
-
 #City
 
 @app.route('/cities', methods=['GET'])

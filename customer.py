@@ -9,6 +9,17 @@ class Customer:
         self.active = active
         self.create_date = create_date
         self.last_update = last_update
+        
+    def __init__(self, dict):
+        self.id = dict.get('CustomerID')
+        self.store_id = dict.get('StoreID')
+        self.first_name = dict.get('FirstName')
+        self.last_name = dict.get('LastName')
+        self.email_id = dict.get('EmailID')
+        self.address_id = dict.get('AddressID')
+        self.active =  dict.get('Active')
+        self.create_date = str(dict.get('CreateDate'))
+        self.last_update = str(dict.get('LastUpdate'))
 
     def serialize(self):
         return self.__dict__

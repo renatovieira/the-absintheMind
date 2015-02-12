@@ -5,7 +5,11 @@ class City:
         self.id = id
         self.name = name
         self.country_id = country_id
-        self.last_update = last_update
+
+    def __init__(self, dict):
+        self.id = dict.get('CityID')
+        self.name = dict.get('CityName')
+        self.country_id = dict.get('CountryID')
 
     def serialize(self):
         return self.__dict__

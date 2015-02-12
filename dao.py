@@ -29,14 +29,14 @@ class Dao:
         self.get_x('COUNTRY')
         countries = []
         for row in self.cursor:
-            countries.append(Country(row.get('CountryID'), row.get('CountryName')))
+            countries.append(Country(row))
         return countries
 
     def get_cities(self):
         self.get_x('CITY')
         cities = []
         for row in self.cursor:
-            cities.append(Country(row.get('CityID'), row.get('CityName'), row.get('CountryID')))
+            cities.append(City(row))
         return cities
 
 
@@ -44,19 +44,26 @@ class Dao:
         self.get_x('ADDRESS')
         addresses = []
         for row in self.cursor:
-            addresses.append(Address(row.get('AddressID'), row.get('Address1'), row.get('Address2'),
-                                     row.get('District'), row.get('PostalCode'), row.get('CityID'),
-                                     row.get('CountryID')))
+            addresses.append(Address(row))
         return addresses
 
     def get_customers(self):
         self.get_x('CUSTOMER')
         customers = []
         for row in self.cursor:
-            customers.append(Address(row.get('CustomerID'), row.get('StoreID'), row.get('FirstName'),
-                                     row.get('LastName'), row.get('EmailID'), row.get('AddressID'),
-                                     row.get('Active'), str(row.get('CreateDate'))))
-            return customers
+            customers.append(Customer(row))
+        return customers
+
+    def find_country_by_id(self, country_id):
+        result = self.find_x_by_y('COUNTRY', 'CountryID', country_id)
+        if result == None:
+            return "No countries found"
+        return Country(result)
+
+    def find_x_by_y(self, x, y, y_val):
+        self.cursor.execute("SELECT * FROM {0} WHERE {1}={2}".format(x,y,y_val))
+        temp = self.cursor.fetchone()
+        return temp
 
     #Delete method
     def delete_country_by_id(self, country_id):

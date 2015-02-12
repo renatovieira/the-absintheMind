@@ -7,7 +7,15 @@ class Address:
         self.postal_code = postal_code
         self.city_id = city_id
         self.country_id = country_id
-        self.last_update = last_update
+
+    def __init__(self, dict):
+        self.id = dict.get('AddressID')
+        self.address1 = dict.get('Address1')
+        self.address2 = dict.get('Address2')
+        self.district = dict.get('District')
+        self.postal_code = dict.get('PostalCode')
+        self.city_id = dict.get('CityID')
+        self.country_id = dict.get('CountryID')
 
     def serialize(self):
         return self.__dict__
