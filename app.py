@@ -115,6 +115,7 @@ def find_address_by_id(address_id):
     return None
 
 
+@app.route('/addresses/<int:address_id>', methods=['DELETE'])
 def delete_address_by_id(address_id):
     return delete_x_by_y('ADDRESS','AddressID',address_id)
 
@@ -158,6 +159,7 @@ def find_customers_by_city(city_id):
     filtered_addresses = find_addresses_by_city(city_id)
     return find_customers_in_addresses(filtered_addresses)
 
+@app.route('/customers/<int:customer_id>', methods=['DELETE'])
 def delete_customer_by_id(customer_id):
     return delete_x_by_y('CUSTOMER','CustomerID',customer_id)
 
