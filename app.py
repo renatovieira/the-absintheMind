@@ -59,23 +59,15 @@ def get_countries():
 
 @app.route('/countries/<int:country_id>', methods=['DELETE'])
 def del_country_by_id(country_id):
-    try:
-        cur.execute("SELECT * FROM COUNTRY WHERE CountryID={0}".format(country_id))
-        temp = cur.fetchone()
-        if temp == None:
-            return "No country exists with given ID: {0}".format(country_id)
-        else:
-            cur.execute("DELETE FROM COUNTRY WHERE CountryID={0}".format(country_id))
-            conn.commit()
-        return "deleted the following row: {0}".format(temp)
-    except IntegrityError:
-        return "Foreign key constraint failure"
+    return delete_x_by_y('COUNTRY','CountryID',country_id)
 
 def find_country_by_id(country_id):
     for country in countries:
         if country.id == country_id:
             return country
     return None
+
+
 
 #City
 
@@ -89,17 +81,7 @@ def get_cities_by_country(country_id):
 
 @app.route('/cities/<int:city_id>', methods=['DELETE'])
 def delete_city_by_id(city_id):
-    try:
-        cur.execute("SELECT * FROM CITY WHERE CityID={0}".format(city_id))
-        temp = cur.fetchone()
-        if temp == None:
-            return "No city exists with given ID: {0}".format(city_id)
-        else:
-            cur.execute("DELETE FROM CITY WHERE CityID={0}".format(city_id))
-            conn.commit()
-        return "deleted the following row: {0}".format(temp)
-    except IntegrityError:
-        return "Foreign key constraint failure"
+    return delete_x_by_y('CITY','CityID',city_id)
 
 def find_city_by_id(city_id):
     for city in cities:
@@ -174,6 +156,19 @@ def find_customers_by_city(city_id):
     return find_customers_in_addresses(filtered_addresses)
 
 
+#Delete method
+def delete_x_by_y(x, y, y_val):
+    try:
+        cur.execute("SELECT * FROM {0} WHERE {1}={2}".format(x,y,y_val))
+        temp = cur.fetchone()
+        if temp == None:
+            return "No {0} exists with given {1}: {2}".format(x,y,y_val)
+        else:
+            cur.execute("DELETE FROM {0} WHERE {1}={2}".format(x,y,y_val))
+            conn.commit()
+        return "deleted the following row: {0}".format(temp)
+    except IntegrityError:
+        return "Foreign key constraint failure"
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0")
