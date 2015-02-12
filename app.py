@@ -115,6 +115,9 @@ def find_address_by_id(address_id):
     return None
 
 
+def delete_address_by_id(address_id):
+    return delete_x_by_y('ADDRESS','AddressID',address_id)
+
 def find_addresses_by_country(country_id):
     filtered_addresses = [address for address in addresses if address.country_id==country_id]
     return filtered_addresses
@@ -155,6 +158,8 @@ def find_customers_by_city(city_id):
     filtered_addresses = find_addresses_by_city(city_id)
     return find_customers_in_addresses(filtered_addresses)
 
+def delete_customer_by_id(customer_id):
+    return delete_x_by_y('CUSTOMER','CustomerID',customer_id)
 
 #Delete method
 def delete_x_by_y(x, y, y_val):
