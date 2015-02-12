@@ -4,10 +4,7 @@ from country import Country
 from city import City
 from address import Address
 from customer import Customer
-from pymysql import IntegrityError
-from conf import *
-import pymysql
-import pdb
+from dao import Dao
 
 app = Flask(__name__)
 app.config["DEBUG"] = True  # Only include this while you are testing your app
@@ -33,41 +30,24 @@ customers = [
     Customer(2, 2, 'Renato', 'Brazil', 3, 3, True, None)
 ]
 
-#database configuration reading functions
-host, user, password, database = read_db_conf()
 
-#mysql cursors and pointers
-# should modify this to match the specific database configuration you have
-conn = pymysql.connect(host=host, user=user, passwd=password, db=database)
-cur = conn.cursor()
-
-#mysql functions
-def conn_db():
-    conn = pymysql.connect(host=host, user=user, passwd=passowrd, db=database)
-    return conn.cursor()
-
-def close_db(c):
-    c.connection.close()
-    c.close()
+dao = Dao()
 
 #Country
 
 @app.route('/countries', methods=['GET'])
 def get_countries():
-    cur.execute("SELECT * FROM COUNTRY")
     return jsonify(countries=[country.serialize() for country in countries])
 
 @app.route('/countries/<int:country_id>', methods=['DELETE'])
 def del_country_by_id(country_id):
-    return delete_x_by_y('COUNTRY','CountryID',country_id)
+    return dao.delete_country_by_id(country_id)
 
 def find_country_by_id(country_id):
     for country in countries:
         if country.id == country_id:
             return country
     return None
-
-
 
 #City
 
@@ -81,7 +61,7 @@ def get_cities_by_country(country_id):
 
 @app.route('/cities/<int:city_id>', methods=['DELETE'])
 def delete_city_by_id(city_id):
-    return delete_x_by_y('CITY','CityID',city_id)
+    return dao.delete_city_by_id(city_id)
 
 def find_city_by_id(city_id):
     for city in cities:
@@ -117,7 +97,7 @@ def find_address_by_id(address_id):
 
 @app.route('/addresses/<int:address_id>', methods=['DELETE'])
 def delete_address_by_id(address_id):
-    return delete_x_by_y('ADDRESS','AddressID',address_id)
+    return dao.delete_address_by_id(address_id)
 
 def find_addresses_by_country(country_id):
     filtered_addresses = [address for address in addresses if address.country_id==country_id]
@@ -161,21 +141,7 @@ def find_customers_by_city(city_id):
 
 @app.route('/customers/<int:customer_id>', methods=['DELETE'])
 def delete_customer_by_id(customer_id):
-    return delete_x_by_y('CUSTOMER','CustomerID',customer_id)
-
-#Delete method
-def delete_x_by_y(x, y, y_val):
-    try:
-        cur.execute("SELECT * FROM {0} WHERE {1}={2}".format(x,y,y_val))
-        temp = cur.fetchone()
-        if temp == None:
-            return "No {0} exists with given {1}: {2}".format(x,y,y_val)
-        else:
-            cur.execute("DELETE FROM {0} WHERE {1}={2}".format(x,y,y_val))
-            conn.commit()
-        return "deleted the following row: {0}".format(temp)
-    except IntegrityError:
-        return "Foreign key constraint failure"
+    return dao.delete_customer_by_id(customer_id)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0")
