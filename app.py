@@ -59,9 +59,17 @@ def get_countries():
 
 @app.route('/countries/<int:country_id>', methods=['DELETE'])
 def del_country_by_id(country_id):
-    #resolve foreign key issue
-    cur.execute("DELETE FROM COUNTRY WHERE CountryID={0}".format(country_id))
-    return jsonify(countries=[country.serialize() for country in countries])
+    try:
+        cur.execute("SELECT * FROM COUNTRY WHERE CountryID={0}".format(country_id))
+        temp = cur.fetchone()
+        if temp == None:
+            return "No country exists with given ID: {0}".format(country_id)
+        else:
+            cur.execute("DELETE FROM COUNTRY WHERE CountryID={0}".format(country_id))
+            conn.commit()
+        return "deleted the following row: {0}".format(temp)
+    except IntegrityError:
+        return "Foreign key constraint failure"
 
 def find_country_by_id(country_id):
     for country in countries:
