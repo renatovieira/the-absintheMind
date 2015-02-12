@@ -4,6 +4,7 @@ from country import Country
 from city import City
 from address import Address
 from customer import Customer
+from pymysql import IntegrityError
 import pymysql
 import pdb
 
@@ -80,11 +81,17 @@ def get_cities_by_country(country_id):
 
 @app.route('/cities/<int:city_id>', methods=['DELETE'])
 def delete_city_by_id(city_id):
-    cur.execute("SELECT * FROM CITY WHERE CityID={0}".format(city_id))
-    temp = cur.fetchone()
-    cur.execute("DELETE FROM CITY WHERE CityID={0}".format(city_id))
-    conn.commit()
-    return "deleted the following row: {0}".format(temp)
+    try:
+        cur.execute("SELECT * FROM CITY WHERE CityID={0}".format(city_id))
+        temp = cur.fetchone()
+        if temp == None:
+            return "No city exists with given ID: {0}".format(city_id)
+        else:
+            cur.execute("DELETE FROM CITY WHERE CityID={0}".format(city_id))
+            conn.commit()
+        return "deleted the following row: {0}".format(temp)
+    except IntegrityError:
+        return "Foreign key constraint failure"
 
 def find_city_by_id(city_id):
     for city in cities:
