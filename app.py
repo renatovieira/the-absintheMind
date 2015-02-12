@@ -1,34 +1,9 @@
 #!flask/bin/python
 from flask import Flask, jsonify
-from country import Country
-from city import City
-from address import Address
-from customer import Customer
 from dao import Dao
 
 app = Flask(__name__)
 app.config["DEBUG"] = True  # Only include this while you are testing your app
-
-countries = [
-    Country(1, 'United States'), Country(2, 'Brazil'), Country(3, 'India')
-]
-
-cities = [
-    City(1, 'New York', 1), City(2, 'Sao Paulo', 2), City(3, 'Bangalore', 3),
-    City(4, 'Chicago', 1), City(5, 'San Francisco', 1)
-]
-
-addresses = [
-    Address(1, '535 W 113th St.', 'Apartment 1', 'Manhattan', 10025, 1, 1),
-    Address(2, '535 W 113th St.', 'Apartment 31', 'Manhattan', 10025, 1, 1),
-    Address(3, 'Rua Francisco Lages, 117', '', 'Butanta', 05376150, 2, 2),
-    Address(4, '230 North Michigan Avenue', '', 'Chicago', 60601, 4, 1)
-]
-
-customers = [
-    Customer(1, 1, 'Renato', 'Nishimori', 1, 1, True, None),
-    Customer(2, 2, 'Renato', 'Brazil', 3, 3, True, None)
-]
 
 
 dao = Dao()
@@ -37,6 +12,7 @@ dao = Dao()
 
 @app.route('/countries', methods=['GET'])
 def get_countries():
+    countries = dao.get_countries()
     return jsonify(countries=[country.serialize() for country in countries])
 
 @app.route('/countries/<int:country_id>', methods=['DELETE'])
@@ -53,6 +29,7 @@ def find_country_by_id(country_id):
 
 @app.route('/cities', methods=['GET'])
 def get_cities():
+    cities = dao.get_cities()
     return jsonify(cities=[city.serialize() for city in cities])
 
 @app.route('/cities/country/<int:country_id>', methods=['GET'])
@@ -77,6 +54,7 @@ def find_cities_by_country(country_id):
 
 @app.route('/addresses', methods=['GET'])
 def get_addresses():
+    addresses = dao.get_addresses()
     return jsonify(addresses=[address.serialize() for address in addresses])
 
 @app.route('/addresses/country/<int:country_id>', methods=['GET'])
@@ -112,6 +90,7 @@ def find_addresses_by_city(city_id):
 
 @app.route('/customers', methods=['GET'])
 def get_customers():
+    customers = dao.get_customers()
     return jsonify(customers=[customer.serialize() for customer in customers])
 
 @app.route('/customers/country/<int:country_id>', methods=['GET'])

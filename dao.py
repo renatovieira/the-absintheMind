@@ -1,6 +1,10 @@
 from conf import *
 import pymysql
 from pymysql import IntegrityError
+from country import Country
+from city import City
+from address import Address
+from customer import Customer
 
 
 class Dao:
@@ -11,13 +15,48 @@ class Dao:
         host, user, password, database = read_db_conf()
 
         conn = pymysql.connect(host=host, user=user, passwd=password, db=database)
-        return conn.cursor()
+        return conn.cursor(pymysql.cursors.DictCursor)
 
     def close_db(self):
         self.cursor.connection.close()
         self.cursor.close()
 
     #Get methods
+    def get_x(self, x):
+        self.cursor.execute("SELECT * FROM {0}".format(x))
+
+    def get_countries(self):
+        self.get_x('COUNTRY')
+        countries = []
+        for row in self.cursor:
+            countries.append(Country(row.get('CountryID'), row.get('CountryName')))
+        return countries
+
+    def get_cities(self):
+        self.get_x('CITY')
+        cities = []
+        for row in self.cursor:
+            cities.append(Country(row.get('CityID'), row.get('CityName'), row.get('CountryID')))
+        return cities
+
+
+    def get_addresses(self):
+        self.get_x('ADDRESS')
+        addresses = []
+        for row in self.cursor:
+            addresses.append(Address(row.get('AddressID'), row.get('Address1'), row.get('Address2'),
+                                     row.get('District'), row.get('PostalCode'), row.get('CityID'),
+                                     row.get('CountryID')))
+        return addresses
+
+    def get_customers(self):
+        self.get_x('CUSTOMER')
+        customers = []
+        for row in self.cursor:
+            customers.append(Address(row.get('CustomerID'), row.get('StoreID'), row.get('FirstName'),
+                                     row.get('LastName'), row.get('EmailID'), row.get('AddressID'),
+                                     row.get('Active'), str(row.get('CreateDate'))))
+            return customers
 
     #Delete method
     def delete_country_by_id(self, country_id):
