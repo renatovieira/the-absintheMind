@@ -55,15 +55,58 @@ class Dao:
         return customers
 
     def find_country_by_id(self, country_id):
-        result = self.find_x_by_y('COUNTRY', 'CountryID', country_id)
+        self.find_x_by_y('COUNTRY', 'CountryID', country_id)
+        result = self.cursor.fetchone()
         if result == None:
             return "No countries found"
         return Country(result)
 
+    def find_city_by_id(self, city_id):
+        self.find_x_by_y('CITY', 'CityID', city_id)
+        result = self.cursor.fetchone()
+        if result == None:
+            return "No cities found"
+        return City(result)
+
+    def find_cities_by_country_id(self, country_id):
+        self.find_x_by_y('CITY', 'CountryID', country_id)
+        cities = []
+        for row in self.cursor:
+            cities.append(City(row))
+        return cities
+
+    def find_addresses_by_country(self, country_id):
+        self.find_x_by_y('ADDRESS', 'CountryID', country_id)
+        addresses = []
+        for row in self.cursor:
+            addresses.append(Address(row))
+        return addresses
+
+    def find_addresses_by_city(self, city_id):
+        self.find_x_by_y('ADDRESS', 'CityID', city_id)
+        addresses = []
+        for row in self.cursor:
+            addresses.append(Address(row))
+        return addresses
+
+    def find_customers_by_country(self, country_id):
+        self.cursor.execute("SELECT * FROM CUSTOMER WHERE AddressID IN "
+                            "(SELECT AddressID from ADDRESS WHERE CountryID = {0})".format(country_id))
+        customers = []
+        for row in self.cursor:
+            customers.append(Customer(row))
+        return customers
+
+    def find_customers_by_city(self, city_id):
+        self.cursor.execute("SELECT * FROM CUSTOMER WHERE AddressID IN "
+                            "(SELECT AddressID from ADDRESS WHERE CityID = {0})".format(city_id))
+        customers = []
+        for row in self.cursor:
+            customers.append(Customer(row))
+        return customers
+
     def find_x_by_y(self, x, y, y_val):
         self.cursor.execute("SELECT * FROM {0} WHERE {1}={2}".format(x,y,y_val))
-        temp = self.cursor.fetchone()
-        return temp
 
     #Delete method
     def delete_country_by_id(self, country_id):
@@ -96,4 +139,4 @@ class Dao:
         self.cursor.execute("UPDATE COUNTRY SET CountryName='{0}' WHERE CountryID={1}".format(country.name, country.id))
 
     def update_city(self, city):
-	self.cursor.execute("UPDATE CITY SET CityName='{0}' WHERE CityID={1}".format(city.name, city.id))
+        self.cursor.execute("UPDATE CITY SET CityName='{0}', CountryID={1} WHERE CityID={2}".format(city.name, city.country_id, city.id))

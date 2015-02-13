@@ -42,7 +42,7 @@ def get_cities():
 
 @app.route('/cities/country/<int:country_id>', methods=['GET'])
 def get_cities_by_country(country_id):
-    return jsonify(cities=[city.serialize() for city in find_cities_by_country(country_id)])
+    return jsonify(cities=[city.serialize() for city in dao.find_cities_by_country_id(country_id)])
 
 @app.route('/cities/<int:city_id>', methods=['DELETE'])
 def delete_city_by_id(city_id):
@@ -57,20 +57,11 @@ def update_city(city_id):
     dict = request.json
     #update all parameters that were sent, keep same information if a parameter has not been sent
     city.name = dict.get('name', city.name)
+    city.country_id = dict.get('country_id', city.country_id)
     #update on the db
     dao.update_city(city)
     #return updated object
     return jsonify({'city': city.serialize()})
-
-def find_city_by_id(city_id):
-    for city in cities:
-        if city.id == city_id:
-            return city
-    return None
-
-def find_cities_by_country(country_id):
-    filtered_cities = [city for city in cities if city.country_id==country_id]
-    return filtered_cities
 
 #Address
 
@@ -81,31 +72,15 @@ def get_addresses():
 
 @app.route('/addresses/country/<int:country_id>', methods=['GET'])
 def get_addresses_by_country(country_id):
-    return jsonify(addresses=[address.serialize() for address in find_addresses_by_country(country_id)])
+    return jsonify(addresses=[address.serialize() for address in dao.find_addresses_by_country(country_id)])
 
 @app.route('/addresses/city/<int:city_id>', methods=['GET'])
 def get_addresses_by_city(city_id):
-    return jsonify(addresses=[address.serialize() for address in find_addresses_by_city(city_id)])
-
-
-def find_address_by_id(address_id):
-    for address in addresses:
-        if address.id == address_id:
-            return address
-    return None
-
+    return jsonify(addresses=[address.serialize() for address in dao.find_addresses_by_city(city_id)])
 
 @app.route('/addresses/<int:address_id>', methods=['DELETE'])
 def delete_address_by_id(address_id):
     return dao.delete_address_by_id(address_id)
-
-def find_addresses_by_country(country_id):
-    filtered_addresses = [address for address in addresses if address.country_id==country_id]
-    return filtered_addresses
-
-def find_addresses_by_city(city_id):
-    filtered_addresses = [address for address in addresses if address.city_id==city_id]
-    return filtered_addresses
 
 #Customer
 
@@ -116,28 +91,11 @@ def get_customers():
 
 @app.route('/customers/country/<int:country_id>', methods=['GET'])
 def get_customers_by_country(country_id):
-    return jsonify(customers=[customer.serialize() for customer in find_customers_by_country(country_id)])
+    return jsonify(customers=[customer.serialize() for customer in dao.find_customers_by_country(country_id)])
 
 @app.route('/customers/city/<int:city_id>', methods=['GET'])
 def get_customers_by_city(city_id):
-    return jsonify(customers=[customer.serialize() for customer in find_customers_by_city(city_id)])
-
-def find_customers_in_addresses(addresses):
-    filtered_customers = []
-    for customer in customers:
-        for address in addresses:
-            if customer.address_id == address.id:
-                filtered_customers.append(customer)
-                break
-    return filtered_customers
-
-def find_customers_by_country(country_id):
-    filtered_addresses = find_addresses_by_country(country_id)
-    return find_customers_in_addresses(filtered_addresses)
-
-def find_customers_by_city(city_id):
-    filtered_addresses = find_addresses_by_city(city_id)
-    return find_customers_in_addresses(filtered_addresses)
+    return jsonify(customers=[customer.serialize() for customer in dao.find_customers_by_city(city_id)])
 
 @app.route('/customers/<int:customer_id>', methods=['DELETE'])
 def delete_customer_by_id(customer_id):
