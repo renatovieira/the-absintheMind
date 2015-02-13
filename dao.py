@@ -36,7 +36,8 @@ class Dao:
         self.get_x('CITY')
         cities = []
         for row in self.cursor:
-            cities.append(City(row))
+            city = City(row)
+            cities.append(city)
         return cities
 
 
@@ -44,7 +45,8 @@ class Dao:
         self.get_x('ADDRESS')
         addresses = []
         for row in self.cursor:
-            addresses.append(Address(row))
+            address = Address(row)
+            addresses.append(address)
         return addresses
 
     def get_customers(self):
@@ -66,7 +68,9 @@ class Dao:
         result = self.cursor.fetchone()
         if result == None:
             return "No cities found"
-        return City(result)
+        city = City(result)
+        city.country = self.find_country_by_id(city.country_id)
+        return city
 
     def find_cities_by_country_id(self, country_id):
         self.find_x_by_y('CITY', 'CountryID', country_id)
