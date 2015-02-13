@@ -1,5 +1,5 @@
 #!flask/bin/python
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from country import Country
 from city import City
 from address import Address
@@ -161,6 +161,7 @@ def find_customers_by_city(city_id):
 
 @app.route('/customers/<int:customer_id>', methods=['DELETE'])
 def delete_customer_by_id(customer_id):
+    print request.data
     return delete_x_by_y('CUSTOMER','CustomerID',customer_id)
 
 #Delete method
