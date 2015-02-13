@@ -1,6 +1,7 @@
 #!flask/bin/python
 from flask import Flask, jsonify, request
 from dao import Dao
+from query import *
 
 app = Flask(__name__)
 app.config["DEBUG"] = True  # Only include this while you are testing your app
@@ -32,6 +33,12 @@ def update_country(country_id):
     dao.update_country(country)
     #return updated object
     return jsonify({'country': country.serialize()})
+
+@app.route('/countries/q="<query>"', methods=['GET'])
+def query_countries(query):
+    query_dict = parse_country_query(query)
+    countries = dao.query_countries(query_dict)
+    return jsonify(countries=[country.serialize() for country in countries])
 
 #City
 

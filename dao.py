@@ -144,3 +144,21 @@ class Dao:
 
     def update_city(self, city):
         self.cursor.execute("UPDATE CITY SET CityName='{0}', CountryID={1} WHERE CityID={2}".format(city.name, city.country_id, city.id))
+
+
+    #Query methods
+    def find_x_by_y_dict(self, x, y_dict):
+        query = None
+        for key in y_dict:
+            if query == None:
+                query = "SELECT * FROM {0} WHERE {1}='{2}'".format(x, key, y_dict.get(key))
+            else:
+                query = query + " AND {0}='{1}'".format(key, y_dict.get(key))
+        self.cursor.execute(query)
+
+    def query_countries(self, query_dict):
+        self.find_x_by_y_dict('COUNTRY', query_dict)
+        countries = []
+        for row in self.cursor:
+            countries.append(Country(row))
+        return countries

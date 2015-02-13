@@ -9,3 +9,7 @@ class Country:
 
     def serialize(self):
         return self.__dict__
+
+    @staticmethod
+    def field_to_database_column():
+        return {'id': 'CountryID', 'name': 'CountryName'}
