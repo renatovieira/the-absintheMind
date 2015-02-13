@@ -94,3 +94,6 @@ class Dao:
     #Update methods
     def update_country(self, country):
         self.cursor.execute("UPDATE COUNTRY SET CountryName='{0}' WHERE CountryID={1}".format(country.name, country.id))
+
+    def update_city(self, city):
+	self.cursor.execute("UPDATE CITY SET CityName='{0}' WHERE CityID={1}".format(city.name, city.id))

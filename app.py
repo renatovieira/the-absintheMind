@@ -48,6 +48,20 @@ def get_cities_by_country(country_id):
 def delete_city_by_id(city_id):
     return dao.delete_city_by_id(city_id)
 
+@app.route('/cities/<int:city_id>', methods=['PUT'])
+def update_city(city_id):
+    city = dao.find_city_by_id(city_id)
+    if not request.json:
+        abort(400)
+    #get all parameters send via curl
+    dict = request.json
+    #update all parameters that were sent, keep same information if a parameter has not been sent
+    city.name = dict.get('name', city.name)
+    #update on the db
+    dao.update_city(city)
+    #return updated object
+    return jsonify({'city': city.serialize()})
+
 def find_city_by_id(city_id):
     for city in cities:
         if city.id == city_id:
@@ -88,7 +102,6 @@ def delete_address_by_id(address_id):
 def find_addresses_by_country(country_id):
     filtered_addresses = [address for address in addresses if address.country_id==country_id]
     return filtered_addresses
-
 
 def find_addresses_by_city(city_id):
     filtered_addresses = [address for address in addresses if address.city_id==city_id]
