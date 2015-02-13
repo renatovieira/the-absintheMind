@@ -90,3 +90,7 @@ class Dao:
             return "deleted the following row: {0}".format(temp)
         except IntegrityError:
             return "Foreign key constraint failure"
+
+    #Update methods
+    def update_country(self, country):
+        self.cursor.execute("UPDATE COUNTRY SET CountryName='{0}' WHERE CountryID={1}".format(country.name, country.id))

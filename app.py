@@ -1,5 +1,5 @@
 #!flask/bin/python
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from dao import Dao
 
 app = Flask(__name__)
@@ -18,6 +18,20 @@ def get_countries():
 @app.route('/countries/<int:country_id>', methods=['DELETE'])
 def del_country_by_id(country_id):
     return dao.delete_country_by_id(country_id)
+
+@app.route('/countries/<int:country_id>', methods=['PUT'])
+def update_country(country_id):
+    country = dao.find_country_by_id(country_id)
+    if not request.json:
+        abort(400)
+    #get all parameters send via curl
+    dict = request.json
+    #update all parameters that were sent, keep same information if a parameter has not been sent
+    country.name = dict.get('name', country.name)
+    #update on the db
+    dao.update_country(country)
+    #return updated object
+    return jsonify({'country': country.serialize()})
 
 #City
 
