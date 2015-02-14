@@ -15,13 +15,18 @@ class Customer:
         self.name = Name(dict.get('FirstName'), dict.get('LastName'))
         self.email_id = dict.get('EmailID')
         self.address_id = dict.get('AddressID')
-        self.active =  dict.get('Active')
+        self.active = dict.get('Active')
         self.create_date = str(dict.get('CreateDate'))
         self.last_update = str(dict.get('LastUpdate'))
 
     def serialize(self):
         self.name = self.name.serialize()
         return self.__dict__
+
+    @staticmethod
+    def field_to_database_column():
+        return {'id': 'CustomerID', 'store_id': 'StoreID', 'first_name': 'FirstName',
+                'last_name': 'LastName', 'email_id': 'EmailID', 'address_id': 'AddressID', 'active': 'Active'}
 
 
 class Name:

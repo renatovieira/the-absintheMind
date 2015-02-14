@@ -2,6 +2,10 @@
 from flask import Flask, jsonify, request
 from dao import Dao
 from query import *
+from country import Country
+from city import City
+from address import Address
+from customer import Customer
 
 app = Flask(__name__)
 app.config["DEBUG"] = True  # Only include this while you are testing your app
@@ -36,7 +40,7 @@ def update_country(country_id):
 
 @app.route('/countries/q="<query>"', methods=['GET'])
 def query_countries(query):
-    query_dict = parse_country_query(query)
+    query_dict = parse_query(query, Country.field_to_database_column())
     countries = dao.query_countries(query_dict)
     return jsonify(countries=[country.serialize() for country in countries])
 
@@ -72,7 +76,7 @@ def update_city(city_id):
 
 @app.route('/cities/q="<query>"', methods=['GET'])
 def query_cities(query):
-    query_dict = parse_city_query(query)
+    query_dict = parse_query(query, City.field_to_database_column())
     cities = dao.query_cities(query_dict)
     return jsonify(cities=[city.serialize() for city in cities])
 
@@ -95,6 +99,12 @@ def get_addresses_by_city(city_id):
 def delete_address_by_id(address_id):
     return dao.delete_address_by_id(address_id)
 
+@app.route('/addresses/q="<query>"', methods=['GET'])
+def query_addressses(query):
+    query_dict = parse_query(query, Address.field_to_database_column())
+    addresses = dao.query_addresses(query_dict)
+    return jsonify(addresses=[address.serialize() for address in addresses])
+
 #Customer
 
 @app.route('/customers', methods=['GET'])
@@ -113,6 +123,12 @@ def get_customers_by_city(city_id):
 @app.route('/customers/<int:customer_id>', methods=['DELETE'])
 def delete_customer_by_id(customer_id):
     return dao.delete_customer_by_id(customer_id)
+
+@app.route('/customers/q="<query>"', methods=['GET'])
+def query_customer(query):
+    query_dict = parse_query(query, Customer.field_to_database_column())
+    customers = dao.query_customers(query_dict)
+    return jsonify(customers=[customer.serialize() for customer in customers])
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0")

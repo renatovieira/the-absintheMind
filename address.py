@@ -19,3 +19,8 @@ class Address:
 
     def serialize(self):
         return self.__dict__
+
+    @staticmethod
+    def field_to_database_column():
+        return {'id': 'AddressID', 'address1': 'Address1', 'address2': 'Address2',
+                'district': 'District', 'postal_code': 'PostalCode', 'city_id': 'CityID', 'country_id': 'CountryID'}

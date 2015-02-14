@@ -154,7 +154,9 @@ class Dao:
                 query = "SELECT * FROM {0} WHERE {1}='{2}'".format(x, key, y_dict.get(key))
             else:
                 query = query + " AND {0}='{1}'".format(key, y_dict.get(key))
+        print query
         self.cursor.execute(query)
+
 
     def query_countries(self, query_dict):
         self.find_x_by_y_dict('COUNTRY', query_dict)
@@ -169,3 +171,17 @@ class Dao:
         for row in self.cursor:
             cities.append(City(row))
         return cities
+
+    def query_addresses(self, query_dict):
+        self.find_x_by_y_dict('ADDRESS', query_dict)
+        addresses = []
+        for row in self.cursor:
+            addresses.append(Address(row))
+        return addresses
+
+    def query_customers(self, query_dict):
+        self.find_x_by_y_dict('CUSTOMER', query_dict)
+        customers = []
+        for row in self.cursor:
+            customers.append(Customer(row))
+        return customers
