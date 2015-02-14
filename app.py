@@ -70,6 +70,12 @@ def update_city(city_id):
     #return updated object
     return jsonify({'city': city.serialize()})
 
+@app.route('/cities/q="<query>"', methods=['GET'])
+def query_cities(query):
+    query_dict = parse_city_query(query)
+    cities = dao.query_cities(query_dict)
+    return jsonify(cities=[city.serialize() for city in cities])
+
 #Address
 
 @app.route('/addresses', methods=['GET'])

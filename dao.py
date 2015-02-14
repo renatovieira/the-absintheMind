@@ -162,3 +162,10 @@ class Dao:
         for row in self.cursor:
             countries.append(Country(row))
         return countries
+
+    def query_cities(self, query_dict):
+        self.find_x_by_y_dict('CITY', query_dict)
+        cities = []
+        for row in self.cursor:
+            cities.append(City(row))
+        return cities
