@@ -13,3 +13,7 @@ class City:
 
     def serialize(self):
         return self.__dict__
+
+    @staticmethod
+    def field_to_database_column():
+        return {'id': 'CityID', 'name': 'CityName', 'country_id': 'CountryID'}

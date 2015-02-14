@@ -144,3 +144,51 @@ class Dao:
 
     def update_city(self, city):
         self.cursor.execute("UPDATE CITY SET CityName='{0}', CountryID={1} WHERE CityID={2}".format(city.name, city.country_id, city.id))
+
+
+    #Query methods
+    def find_x_by_y_dict(self, x, y_dict, and_query):
+        query = None
+        for param in y_dict:
+            if param[0] != 'OFFSET' and param[0] != 'LIMIT':
+                if query is None:
+                    query = "SELECT * FROM {0} WHERE {1}='{2}'".format(x, param[0], param[1])
+                elif and_query:
+                    query = query + " AND {0}='{1}'".format(param[0], param[1])
+                else:
+                    query = query + " OR {0}='{1}'".format(param[0], param[1])
+        for param in y_dict:
+            if param[0] == 'LIMIT':
+                query = query + " LIMIT {0}".format(param[1])
+            elif param[0] == 'OFFSET':
+                query = query + " OFFSET {0}".format(param[1])
+        print query
+        self.cursor.execute(query)
+
+    def query_countries(self, query_dict, and_query):
+        self.find_x_by_y_dict('COUNTRY', query_dict, and_query)
+        countries = []
+        for row in self.cursor:
+            countries.append(Country(row))
+        return countries
+
+    def query_cities(self, query_dict, and_query):
+        self.find_x_by_y_dict('CITY', query_dict, and_query)
+        cities = []
+        for row in self.cursor:
+            cities.append(City(row))
+        return cities
+
+    def query_addresses(self, query_dict, and_query):
+        self.find_x_by_y_dict('ADDRESS', query_dict, and_query)
+        addresses = []
+        for row in self.cursor:
+            addresses.append(Address(row))
+        return addresses
+
+    def query_customers(self, query_dict, and_query):
+        self.find_x_by_y_dict('CUSTOMER', query_dict, and_query)
+        customers = []
+        for row in self.cursor:
+            customers.append(Customer(row))
+        return customers
