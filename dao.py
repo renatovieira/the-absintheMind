@@ -138,7 +138,30 @@ class Dao:
         except IntegrityError:
             return "Foreign key constraint failure"
 
-    #Update methods
+    #Create methods
+
+    def create_row_in_country(self,request):
+        country = {
+            'CountryID': request.form['CountryID'],
+            'CountryName': request.form['CountryName']
+        }
+
+        self.cursor.execute("INSERT INTO CITY (CountryID, CountryName) VALUES (CountryID={0},CountryName={1})".format(country['CountryID'],country['CountryName']))
+
+    def create_row_in_address(self,request):
+        address = {
+            'Address_id' :request.json['Address_id'],
+            'Address1': request.json['Address1'],
+            'Address2':request.json['Address2'],
+            'District':request.json['District'],
+            'CityID':request.json['CityID'],
+            'PostalCode':request.json['PostalCode'],
+            'CountryID': request.json['CountryID']
+        }
+        self.cursor.execute("INSERT INTO ADDRESS (Address_id, Address1, Address2, District, CityID, PostalCode, CountryID) VALUES (Address_id={0},Address1={1},Address2={2},District={3},CityID={4},PostalCode={5},CountryID={6}".format(address['Address_id'],address['Address1'],address['Address2'],address['District'],address['CityID'],address['PostalCode'],address['CountryID']))
+
+
+        #Update methods
     def update_country(self, country):
         self.cursor.execute("UPDATE COUNTRY SET CountryName='{0}' WHERE CountryID={1}".format(country.name, country.id))
 

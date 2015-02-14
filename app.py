@@ -28,6 +28,12 @@ def get_countries():
     countries = dao.get_countries()
     return jsonify(countries=[country.serialize() for country in countries])
 
+@app.route('/countries', methods=['POST'])
+def create_country():
+    print request.form
+    #return request
+    return dao.create_row_in_country(request)
+
 @app.route('/countries/<int:country_id>', methods=['DELETE'])
 def del_country_by_id(country_id):
     return dao.delete_country_by_id(country_id)
@@ -102,6 +108,10 @@ def get_addresses_by_country(country_id):
 @app.route('/addresses/city/<int:city_id>', methods=['GET'])
 def get_addresses_by_city(city_id):
     return jsonify(addresses=[address.serialize() for address in dao.find_addresses_by_city(city_id)])
+
+@app.route('/addresses', methods=['POST'])
+def create_address():
+    return dao.create_row_in_address(request)
 
 @app.route('/addresses/<int:address_id>', methods=['DELETE'])
 def delete_address_by_id(address_id):
