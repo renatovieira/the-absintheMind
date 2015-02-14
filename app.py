@@ -8,175 +8,106 @@ from pymysql import IntegrityError
 from conf import *
 import pymysql
 import pdb
+from dao import Dao
 
 app = Flask(__name__)
 app.config["DEBUG"] = True  # Only include this while you are testing your app
 
-countries = [
-    Country(1, 'United States'), Country(2, 'Brazil'), Country(3, 'India')
-]
 
-cities = [
-    City(1, 'New York', 1), City(2, 'Sao Paulo', 2), City(3, 'Bangalore', 3),
-    City(4, 'Chicago', 1), City(5, 'San Francisco', 1)
-]
-
-addresses = [
-    Address(1, '535 W 113th St.', 'Apartment 1', 'Manhattan', 10025, 1, 1),
-    Address(2, '535 W 113th St.', 'Apartment 31', 'Manhattan', 10025, 1, 1),
-    Address(3, 'Rua Francisco Lages, 117', '', 'Butanta', 05376150, 2, 2),
-    Address(4, '230 North Michigan Avenue', '', 'Chicago', 60601, 4, 1)
-]
-
-customers = [
-    Customer(1, 1, 'Renato', 'Nishimori', 1, 1, True, None),
-    Customer(2, 2, 'Renato', 'Brazil', 3, 3, True, None)
-]
-
-#database configuration reading functions
-host, user, password, database = read_db_conf()
-
-#mysql cursors and pointers
-# should modify this to match the specific database configuration you have
-conn = pymysql.connect(host=host, user=user, passwd=password, db=database)
-cur = conn.cursor()
-
-#mysql functions
-def conn_db():
-    conn = pymysql.connect(host=host, user=user, passwd=passowrd, db=database)
-    return conn.cursor()
-
-def close_db(c):
-    c.connection.close()
-    c.close()
+dao = Dao()
 
 #Country
 
 @app.route('/countries', methods=['GET'])
 def get_countries():
-    cur.execute("SELECT * FROM COUNTRY")
+    countries = dao.get_countries()
     return jsonify(countries=[country.serialize() for country in countries])
 
 @app.route('/countries/<int:country_id>', methods=['DELETE'])
 def del_country_by_id(country_id):
-    return delete_x_by_y('COUNTRY','CountryID',country_id)
+    return dao.delete_country_by_id(country_id)
 
-def find_country_by_id(country_id):
-    for country in countries:
-        if country.id == country_id:
-            return country
-    return None
-
-
+@app.route('/countries/<int:country_id>', methods=['PUT'])
+def update_country(country_id):
+    country = dao.find_country_by_id(country_id)
+    if not request.json:
+        abort(400)
+    #get all parameters send via curl
+    dict = request.json
+    #update all parameters that were sent, keep same information if a parameter has not been sent
+    country.name = dict.get('name', country.name)
+    #update on the db
+    dao.update_country(country)
+    #return updated object
+    return jsonify({'country': country.serialize()})
 
 #City
 
 @app.route('/cities', methods=['GET'])
 def get_cities():
+    cities = dao.get_cities()
     return jsonify(cities=[city.serialize() for city in cities])
 
 @app.route('/cities/country/<int:country_id>', methods=['GET'])
 def get_cities_by_country(country_id):
-    return jsonify(cities=[city.serialize() for city in find_cities_by_country(country_id)])
+    return jsonify(cities=[city.serialize() for city in dao.find_cities_by_country_id(country_id)])
 
 @app.route('/cities/<int:city_id>', methods=['DELETE'])
 def delete_city_by_id(city_id):
-    return delete_x_by_y('CITY','CityID',city_id)
+    return dao.delete_city_by_id(city_id)
 
-def find_city_by_id(city_id):
-    for city in cities:
-        if city.id == city_id:
-            return city
-    return None
-
-def find_cities_by_country(country_id):
-    filtered_cities = [city for city in cities if city.country_id==country_id]
-    return filtered_cities
+@app.route('/cities/<int:city_id>', methods=['PUT'])
+def update_city(city_id):
+    city = dao.find_city_by_id(city_id)
+    if not request.json:
+        abort(400)
+    #get all parameters send via curl
+    dict = request.json
+    #update all parameters that were sent, keep same information if a parameter has not been sent
+    city.name = dict.get('name', city.name)
+    city.country_id = dict.get('country_id', city.country_id)
+    #update on the db
+    dao.update_city(city)
+    #return updated object
+    return jsonify({'city': city.serialize()})
 
 #Address
 
 @app.route('/addresses', methods=['GET'])
 def get_addresses():
+    addresses = dao.get_addresses()
     return jsonify(addresses=[address.serialize() for address in addresses])
 
 @app.route('/addresses/country/<int:country_id>', methods=['GET'])
 def get_addresses_by_country(country_id):
-    return jsonify(addresses=[address.serialize() for address in find_addresses_by_country(country_id)])
+    return jsonify(addresses=[address.serialize() for address in dao.find_addresses_by_country(country_id)])
 
 @app.route('/addresses/city/<int:city_id>', methods=['GET'])
 def get_addresses_by_city(city_id):
-    return jsonify(addresses=[address.serialize() for address in find_addresses_by_city(city_id)])
-
-
-def find_address_by_id(address_id):
-    for address in addresses:
-        if address.id == address_id:
-            return address
-    return None
-
+    return jsonify(addresses=[address.serialize() for address in dao.find_addresses_by_city(city_id)])
 
 @app.route('/addresses/<int:address_id>', methods=['DELETE'])
 def delete_address_by_id(address_id):
-    return delete_x_by_y('ADDRESS','AddressID',address_id)
-
-def find_addresses_by_country(country_id):
-    filtered_addresses = [address for address in addresses if address.country_id==country_id]
-    return filtered_addresses
-
-
-def find_addresses_by_city(city_id):
-    filtered_addresses = [address for address in addresses if address.city_id==city_id]
-    return filtered_addresses
+    return dao.delete_address_by_id(address_id)
 
 #Customer
 
 @app.route('/customers', methods=['GET'])
 def get_customers():
+    customers = dao.get_customers()
     return jsonify(customers=[customer.serialize() for customer in customers])
 
 @app.route('/customers/country/<int:country_id>', methods=['GET'])
 def get_customers_by_country(country_id):
-    return jsonify(customers=[customer.serialize() for customer in find_customers_by_country(country_id)])
+    return jsonify(customers=[customer.serialize() for customer in dao.find_customers_by_country(country_id)])
 
 @app.route('/customers/city/<int:city_id>', methods=['GET'])
 def get_customers_by_city(city_id):
-    return jsonify(customers=[customer.serialize() for customer in find_customers_by_city(city_id)])
-
-def find_customers_in_addresses(addresses):
-    filtered_customers = []
-    for customer in customers:
-        for address in addresses:
-            if customer.address_id == address.id:
-                filtered_customers.append(customer)
-                break
-    return filtered_customers
-
-def find_customers_by_country(country_id):
-    filtered_addresses = find_addresses_by_country(country_id)
-    return find_customers_in_addresses(filtered_addresses)
-
-def find_customers_by_city(city_id):
-    filtered_addresses = find_addresses_by_city(city_id)
-    return find_customers_in_addresses(filtered_addresses)
+    return jsonify(customers=[customer.serialize() for customer in dao.find_customers_by_city(city_id)])
 
 @app.route('/customers/<int:customer_id>', methods=['DELETE'])
 def delete_customer_by_id(customer_id):
-    print request.data
-    return delete_x_by_y('CUSTOMER','CustomerID',customer_id)
-
-#Delete method
-def delete_x_by_y(x, y, y_val):
-    try:
-        cur.execute("SELECT * FROM {0} WHERE {1}={2}".format(x,y,y_val))
-        temp = cur.fetchone()
-        if temp == None:
-            return "No {0} exists with given {1}: {2}".format(x,y,y_val)
-        else:
-            cur.execute("DELETE FROM {0} WHERE {1}={2}".format(x,y,y_val))
-            conn.commit()
-        return "deleted the following row: {0}".format(temp)
-    except IntegrityError:
-        return "Foreign key constraint failure"
+    return dao.delete_customer_by_id(customer_id)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0")
