@@ -147,20 +147,23 @@ class Dao:
             'CountryID': request.form['CountryID'],
             'CountryName': request.form['CountryName']
         }
-
+        test = "INSERT INTO CITY (CountryID, CountryName) VALUES (CountryID={0},CountryName={1})".format(country['CountryID'],country['CountryName'])
+        print test
         self.cursor.execute("INSERT INTO CITY (CountryID, CountryName) VALUES (CountryID={0},CountryName={1})".format(country['CountryID'],country['CountryName']))
 
     def create_row_in_address(self,request):
         address = {
-            'Address_id' :request.json['Address_id'],
-            'Address1': request.json['Address1'],
-            'Address2':request.json['Address2'],
-            'District':request.json['District'],
-            'CityID':request.json['CityID'],
-            'PostalCode':request.json['PostalCode'],
-            'CountryID': request.json['CountryID']
+            'AddressID' :request.form['AddressID'],
+            'Address1': request.form['Address1'],
+            'Address2':request.form['Address2'],
+            'District':request.form['District'],
+            'CityID':request.form['CityID'],
+            'PostalCode':request.form['PostalCode'],
+            'CountryID': request.form['CountryID']
         }
-        self.cursor.execute("INSERT INTO ADDRESS (Address_id, Address1, Address2, District, CityID, PostalCode, CountryID) VALUES (Address_id={0},Address1={1},Address2={2},District={3},CityID={4},PostalCode={5},CountryID={6}".format(address['Address_id'],address['Address1'],address['Address2'],address['District'],address['CityID'],address['PostalCode'],address['CountryID']))
+        print "INSERT INTO ADDRESS (AddressID, Address1, Address2, District, CityID, PostalCode, CountryID) VALUES (AddressID={0},Address1={1},Address2={2},District={3},CityID={4},PostalCode={5},CountryID={6})".format(address['AddressID'],address['Address1'],address['Address2'],address['District'],address['CityID'],address['PostalCode'],address['CountryID'])
+        self.cursor.execute("INSERT INTO ADDRESS (AddressID, Address1, Address2, District, CityID, PostalCode, CountryID) VALUES ({0},{1},{2},{3},{4},{5},{6})".format(address['AddressID'],address['Address1'],address['Address2'],address['District'],address['CityID'],address['PostalCode'],address['CountryID']))
+        self.cursor.connection.commit()
 
 
         #Update methods
