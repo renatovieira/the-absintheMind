@@ -1,5 +1,5 @@
 #!flask/bin/python
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, abort
 from country import Country
 from city import City
 from address import Address
@@ -36,7 +36,11 @@ def create_country():
 
 @app.route('/countries/<int:country_id>', methods=['DELETE'])
 def del_country_by_id(country_id):
-    return dao.delete_country_by_id(country_id)
+    temp = dao.delete_country_by_id(country_id)
+    if not temp:
+        abort(404)
+    else:
+        return dao.delete_country_by_id(country_id)
 
 @app.route('/countries/<int:country_id>', methods=['PUT'])
 def update_country(country_id):
@@ -71,7 +75,11 @@ def get_cities_by_country(country_id):
 
 @app.route('/cities/<int:city_id>', methods=['DELETE'])
 def delete_city_by_id(city_id):
-    return dao.delete_city_by_id(city_id)
+    temp = dao.delete_city_by_id(city_id)
+    if not temp:
+        abort(404)
+    else:
+        return dao.delete_city_by_id(city_id)
 
 @app.route('/cities/<int:city_id>', methods=['PUT'])
 def update_city(city_id):
@@ -115,7 +123,11 @@ def create_address():
 
 @app.route('/addresses/<int:address_id>', methods=['DELETE'])
 def delete_address_by_id(address_id):
-    return dao.delete_address_by_id(address_id)
+    temp = dao.delete_address_by_id(address_id)
+    if not temp:
+        abort(404)
+    else:
+        return dao.delete_address_by_id(address_id)
 
 @app.route('/addresses/q="<query>"', methods=['GET'])
 def query_addresses(query):
@@ -140,7 +152,11 @@ def get_customers_by_city(city_id):
 
 @app.route('/customers/<int:customer_id>', methods=['DELETE'])
 def delete_customer_by_id(customer_id):
-    return dao.delete_customer_by_id(customer_id)
+    temp = dao.delete_customer_by_id(customer_id)
+    if not temp:
+        abort(404)
+    else:
+        return dao.delete_customer_by_id(customer_id)
 
 @app.route('/customers/q="<query>"', methods=['GET'])
 def query_customer(query):

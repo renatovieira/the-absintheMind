@@ -126,17 +126,19 @@ class Dao:
         return self.delete_x_by_y('CUSTOMER', 'CustomerID', customer_id)
 
     def delete_x_by_y(self, x, y, y_val):
-        try:
-            self.cursor.execute("SELECT * FROM {0} WHERE {1}={2}".format(x,y,y_val))
-            temp = self.cursor.fetchone()
-            if temp == None:
-                return "No {0} exists with given {1}: {2}".format(x,y,y_val)
-            else:
-                self.cursor.execute("DELETE FROM {0} WHERE {1}={2}".format(x,y,y_val))
-                self.cursor.conn.commit()
+        #try:
+        self.cursor.execute("SELECT * FROM {0} WHERE {1}={2}".format(x,y,y_val))
+        temp = self.cursor.fetchone()
+        if temp == None:
+            #abort(404)
+            return False
+            #return "No {0} exists with given {1}: {2}".format(x,y,y_val)
+        else:
+            self.cursor.execute("DELETE FROM {0} WHERE {1}={2}".format(x,y,y_val))
+            self.cursor.connection.commit()
             return "deleted the following row: {0}".format(temp)
-        except IntegrityError:
-            return "Foreign key constraint failure"
+        #except IntegrityError:
+        #    return "Foreign key constraint failure"
 
     #Create methods
 
