@@ -184,6 +184,27 @@ def get_customers_by_country(country_id):
 def get_customers_by_city(city_id):
     return jsonify(customers=[customer.serialize() for customer in dao.find_customers_by_city(city_id)])
 
+@app.route('/customers/<int:customer_id>', methods=['PUT'])
+def update_customer(customer_id):
+    customer = dao.find_customer_by_id(customer_id)
+    if not request.json:
+	abort(400)
+    #get all parameters sent via curl
+    dict = request.json
+    #update all parameters that were sent, keep information same if a parameter has not been sent
+    customer.firstname = dict.get('firstname', customer.firstname)
+    customer.lastname = dict.get('lastname', customer.lastname)
+    customer.emailid = dict.get('emailid', customer.emailid)
+    customer.store_id = dict.get('store_id', customer.store_id)
+    customer.address_id = dict.get('address_id', customer.address_id)
+    customer.active = dict.get('active', customer.active)
+    customer.createdate = dict.get('createdate', customer.createdate)
+    customer.lastupdate = dict.get('lastupdate', customer.lastupdate)
+    #update on db
+    dao.update_customer(customer_id)
+    #return updated object
+    return jsonify({'customer': customer.serialize()})
+
 @app.route('/customers/<int:customer_id>', methods=['DELETE'])
 def delete_customer_by_id(customer_id):
     temp = dao.delete_customer_by_id(customer_id)

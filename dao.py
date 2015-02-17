@@ -60,7 +60,8 @@ class Dao:
         result = self.cursor.fetchone()
         if result == None:
             return "No countries found"
-        return Country(result)
+	country = Country(result)
+        return country
 
     def find_city_by_id(self, city_id):
         self.find_x_by_y('CITY', 'CityID', city_id)
@@ -80,6 +81,14 @@ class Dao:
 	address.city = self.find_addresses_by_city(address.city_id)
 	address.country = self.find_addresses_by_country(address.country_id)
 	return address
+
+    def find_customer_by_id(self, custoemr_id):
+	self.find_x_by_y('CUSTOMER', 'CustomerID', customer_id)
+	result = self.cursor.fetchone()
+	if result == None:
+		return "No such customer"
+	customer = Customer(result)
+	return customer
 
     def find_cities_by_country_id(self, country_id):
         self.find_x_by_y('CITY', 'CountryID', country_id)
@@ -184,6 +193,9 @@ class Dao:
 
     def update_address(self, address):
 	self.cursor.execute("UPDATE ADDRESS SET Address1='{0}', Address2='{1}', District='{2}', PostalCode={3}, CityID={4}, CountryID={5} WHERE AddressID={6}".format(address.address1, address.address2, address.district, address.postalcode, address.city_id, address.country_id, address.id))
+
+    def update_customer(self, customer):
+	self.cursor.execute("UPDATE CUSTOMER SET FirstName='{0}', LastName='{1}', EmailID='{2}', StoreID={3}, AddressID={4}, Active={5}, CreateDate='{6}', LastUpdate='{7}' WHERE CustomerID={8}".format(customer.firstname, customer.lastname, customer.emailid, customer.store_id, customer.address_id, customer.active, customer.createdate, customer.lastupdate, customer.id))
 
     #Query methods
     def find_x_by_y_dict(self, x, y_dict, and_query):
