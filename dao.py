@@ -40,7 +40,6 @@ class Dao:
             cities.append(city)
         return cities
 
-
     def get_addresses(self):
         self.get_x('ADDRESS')
         addresses = []
@@ -71,6 +70,16 @@ class Dao:
         city = City(result)
         city.country = self.find_country_by_id(city.country_id)
         return city
+
+    def find_address_by_id(self, address_id):
+	self.find_x_by_y('ADDRESS', 'AddressID', address_id)
+	result = self.cursor.fetchone()
+	if result == None:
+		return "No addresses found"
+	address = Address(result)
+	address.city = self.find_addresses_by_city(address.city_id)
+	address.country = self.find_addresses_by_country(address.country_id)
+	return address
 
     def find_cities_by_country_id(self, country_id):
         self.find_x_by_y('CITY', 'CountryID', country_id)
@@ -173,6 +182,8 @@ class Dao:
     def update_city(self, city):
         self.cursor.execute("UPDATE CITY SET CityName='{0}', CountryID={1} WHERE CityID={2}".format(city.name, city.country_id, city.id))
 
+    def update_address(self, address):
+	self.cursor.execute("UPDATE ADDRESS SET Address1='{0}', Address2='{1}', District='{2}', PostalCode={3}, CityID={4}, CountryID={5} WHERE AddressID={6}".format(address.address1, address.address2, address.district, address.postalcode, address.city_id, address.country_id, address.id))
 
     #Query methods
     def find_x_by_y_dict(self, x, y_dict, and_query):

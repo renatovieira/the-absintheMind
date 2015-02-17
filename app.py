@@ -132,6 +132,25 @@ def get_addresses_by_country(country_id):
 def get_addresses_by_city(city_id):
     return jsonify(addresses=[address.serialize() for address in dao.find_addresses_by_city(city_id)])
 
+@app.route('/addresses/<int:address_id>', methods=['PUT'])
+def update_address(address_id):
+    address = dao.find_address_by_id(address_id)
+    if not request.json:
+	abort(400)
+    #get all parameters sent via curl
+    dict = request.json
+    #update all parameters that were sent, keep same information if a parameter has not been sent
+    address.address1 = dict.get('address1', address.address1)
+    address.address2 = dict.get('address2', address.address2)
+    address.district = dict.get('district', address.district)
+    address.postalcode = dict.get('postalcode', address.postalcode)
+    address.city_id = dict.get('city_id', address.city_id)
+    address.country_id = dict.get('country_id', address.country_id)
+    #update on the db
+    dao.update_address(address)
+    #return updated object
+    return jsonify({'address': address.serialize()})
+	
 @app.route('/addresses', methods=['POST'])
 def create_address():
     return dao.create_row_in_address(request)
