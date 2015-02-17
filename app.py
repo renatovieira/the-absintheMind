@@ -1,11 +1,12 @@
 #!flask/bin/python
-from flask import Flask, jsonify, request, abort
+from flask import Flask, jsonify, request, abort, Response
 from country import Country
 from city import City
 from address import Address
 from customer import Customer
 from pymysql import IntegrityError
 from conf import *
+from dicttoxml import dicttoxml
 import pymysql
 import pdb
 from dao import Dao
@@ -21,12 +22,26 @@ app.config["DEBUG"] = True  # Only include this while you are testing your app
 
 dao = Dao()
 
+#testing xml
+@app.route('/xml')
+def xml_ret():
+    xml = {'foo': 'foo'}
+    return Response(dicttoxml(xml), mimetype='text/xml')
+
+def xmlify(d):
+    return Response(dicttoxml(d), mimetype='application/xml')
+
 #Country
 
 @app.route('/countries', methods=['GET'])
 def get_countries():
     countries = dao.get_countries()
-    return jsonify(countries=[country.serialize() for country in countries])
+    print request.headers['Content-Type']
+    if request.headers['Content-Type'] =='application/xml':
+        countries = [country.serialize() for country in countries]
+        return xmlify(countries)
+    elif request.headers['Content-Type'] =='application/json':
+        return jsonify(countries=[country.serialize() for country in countries])
 
 @app.route('/countries', methods=['POST'])
 def create_country():
