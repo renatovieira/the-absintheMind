@@ -58,37 +58,34 @@ class Dao:
     def find_country_by_id(self, country_id):
         self.find_x_by_y('COUNTRY', 'CountryID', country_id)
         result = self.cursor.fetchone()
-        if result == None:
+        if result is None:
             return "No countries found"
-	country = Country(result)
+        country = Country(result)
         return country
 
     def find_city_by_id(self, city_id):
         self.find_x_by_y('CITY', 'CityID', city_id)
         result = self.cursor.fetchone()
-        if result == None:
+        if result is None:
             return "No cities found"
         city = City(result)
-        city.country = self.find_country_by_id(city.country_id)
         return city
 
     def find_address_by_id(self, address_id):
-	self.find_x_by_y('ADDRESS', 'AddressID', address_id)
-	result = self.cursor.fetchone()
-	if result == None:
-		return "No addresses found"
-	address = Address(result)
-	address.city = self.find_addresses_by_city(address.city_id)
-	address.country = self.find_addresses_by_country(address.country_id)
-	return address
+        self.find_x_by_y('ADDRESS', 'AddressID', address_id)
+        result = self.cursor.fetchone()
+        if result is None:
+            return "No addresses found"
+        address = Address(result)
+        return address
 
-    def find_customer_by_id(self, custoemr_id):
-	self.find_x_by_y('CUSTOMER', 'CustomerID', customer_id)
-	result = self.cursor.fetchone()
-	if result == None:
-		return "No such customer"
-	customer = Customer(result)
-	return customer
+    def find_customer_by_id(self, customer_id):
+        self.find_x_by_y('CUSTOMER', 'CustomerID', customer_id)
+        result = self.cursor.fetchone()
+        if result == None:
+            return "No such customer"
+        customer = Customer(result)
+        return customer
 
     def find_cities_by_country_id(self, country_id):
         self.find_x_by_y('CITY', 'CountryID', country_id)
@@ -179,12 +176,13 @@ class Dao:
             'PostalCode':request.form['PostalCode'],
             'CountryID': request.form['CountryID']
         }
-        print "INSERT INTO ADDRESS (AddressID, Address1, Address2, District, CityID, PostalCode, CountryID) VALUES (AddressID={0},Address1={1},Address2={2},District={3},CityID={4},PostalCode={5},CountryID={6})".format(address['AddressID'],address['Address1'],address['Address2'],address['District'],address['CityID'],address['PostalCode'],address['CountryID'])
-        self.cursor.execute("INSERT INTO ADDRESS (AddressID, Address1, Address2, District, CityID, PostalCode, CountryID) VALUES ({0},{1},{2},{3},{4},{5},{6})".format(address['AddressID'],address['Address1'],address['Address2'],address['District'],address['CityID'],address['PostalCode'],address['CountryID']))
+        self.cursor.execute("INSERT INTO ADDRESS (AddressID, Address1, Address2, District, CityID, PostalCode, CountryID)"
+                            " VALUES ({0},{1},{2},{3},{4},{5},{6})"
+                            .format(address['AddressID'],address['Address1'],address['Address2'],address['District'],
+                                    address['CityID'],address['PostalCode'],address['CountryID']))
         self.cursor.connection.commit()
 
-
-        #Update methods
+    #Update methods
     def update_country(self, country):
         self.cursor.execute("UPDATE COUNTRY SET CountryName='{0}' WHERE CountryID={1}".format(country.name, country.id))
 
@@ -192,10 +190,21 @@ class Dao:
         self.cursor.execute("UPDATE CITY SET CityName='{0}', CountryID={1} WHERE CityID={2}".format(city.name, city.country_id, city.id))
 
     def update_address(self, address):
-	self.cursor.execute("UPDATE ADDRESS SET Address1='{0}', Address2='{1}', District='{2}', PostalCode={3}, CityID={4}, CountryID={5} WHERE AddressID={6}".format(address.address1, address.address2, address.district, address.postalcode, address.city_id, address.country_id, address.id))
+        self.cursor.execute("UPDATE ADDRESS SET Address1='{0}', Address2='{1}', District='{2}', PostalCode={3}, CityID={4},"
+                            " CountryID={5} WHERE AddressID={6}".format(address.address1, address.address2, address.district,
+                                                                        address.postal_code, address.city_id, address.country_id, address.id))
+
+    @staticmethod
+    def field_to_database_column():
+        return {'id': 'CustomerID', 'store_id': 'StoreID', 'first_name': 'FirstName',
+                'last_name': 'LastName', 'email_id': 'EmailID', 'address_id': 'AddressID', 'active': 'Active'}
 
     def update_customer(self, customer):
-	self.cursor.execute("UPDATE CUSTOMER SET FirstName='{0}', LastName='{1}', EmailID='{2}', StoreID={3}, AddressID={4}, Active={5}, CreateDate='{6}', LastUpdate='{7}' WHERE CustomerID={8}".format(customer.firstname, customer.lastname, customer.emailid, customer.store_id, customer.address_id, customer.active, customer.createdate, customer.lastupdate, customer.id))
+        self.cursor.execute("UPDATE CUSTOMER SET FirstName='{0}', LastName='{1}', EmailID='{2}', "
+                            "StoreID={3}, AddressID={4}, Active={5}, CreateDate='{6}' "
+                            "WHERE CustomerID={7}".format(customer.name.first, customer.name.last, customer.email_id,
+                                                          customer.store_id, customer.address_id, customer.active,
+                                                          customer.create_date, customer.id))
 
     #Query methods
     def find_x_by_y_dict(self, x, y_dict, and_query):

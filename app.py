@@ -135,14 +135,14 @@ def get_addresses_by_city(city_id):
 def update_address(address_id):
     address = dao.find_address_by_id(address_id)
     if not request.json:
-	    abort(400)
+        abort(400)
     #get all parameters sent via curl
     dict = request.json
     #update all parameters that were sent, keep same information if a parameter has not been sent
     address.address1 = dict.get('address1', address.address1)
     address.address2 = dict.get('address2', address.address2)
     address.district = dict.get('district', address.district)
-    address.postalcode = dict.get('postalcode', address.postalcode)
+    address.postal_code = dict.get('postal_code', address.postal_code)
     address.city_id = dict.get('city_id', address.city_id)
     address.country_id = dict.get('country_id', address.country_id)
     #update on the db
@@ -194,16 +194,15 @@ def update_customer(customer_id):
     #get all parameters sent via curl
     dict = request.json
     #update all parameters that were sent, keep information same if a parameter has not been sent
-    customer.firstname = dict.get('firstname', customer.firstname)
-    customer.lastname = dict.get('lastname', customer.lastname)
-    customer.emailid = dict.get('emailid', customer.emailid)
+    customer.name.first = dict.get('first_name', customer.name.first)
+    customer.name.last = dict.get('last_name', customer.name.last)
+    customer.email_id = dict.get('email_id', customer.email_id)
     customer.store_id = dict.get('store_id', customer.store_id)
     customer.address_id = dict.get('address_id', customer.address_id)
     customer.active = dict.get('active', customer.active)
-    customer.createdate = dict.get('createdate', customer.createdate)
-    customer.lastupdate = dict.get('lastupdate', customer.lastupdate)
+    customer.create_date = dict.get('create_date', customer.create_date)
     #update on db
-    dao.update_customer(customer_id)
+    dao.update_customer(customer)
     #return updated object
     return jsonify({'customer': customer.serialize()})
 
