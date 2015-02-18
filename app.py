@@ -22,30 +22,26 @@ app.config["DEBUG"] = True  # Only include this while you are testing your app
 
 dao = Dao()
 
-#testing xml
-@app.route('/xml')
-def xml_ret():
-    xml = {'foo': 'foo'}
-    return Response(dicttoxml(xml), mimetype='text/xml')
 
-def xmlify(d):
-    return Response(dicttoxml(d), mimetype='application/xml')
+def xmlify(objects):
+    return Response(dicttoxml(objects), mimetype='application/xml')
+
+
+def get_right_format(objects, request):
+    if request.headers['Content-Type'] == 'application/xml':
+        objects = [obj.serialize() for obj in objects]
+        return xmlify(objects=[obj.serialize() for obj in objects])
+    return jsonify(objects=[obj.serialize() for obj in objects])
 
 #Country
 
 @app.route('/countries', methods=['GET'])
 def get_countries():
     countries = dao.get_countries()
-    print request.headers['Content-Type']
-    if request.headers['Content-Type'] =='application/xml':
-        countries = [country.serialize() for country in countries]
-        return xmlify(countries)
-    elif request.headers['Content-Type'] =='application/json':
-        return jsonify(countries=[country.serialize() for country in countries])
+    return get_right_format(countries, request)
 
 @app.route('/countries', methods=['POST'])
 def create_country():
-    print request.form
     #return request
     return dao.create_row_in_country(request)
 
@@ -75,18 +71,19 @@ def update_country(country_id):
 def query_countries(query):
     query_dict, and_query = parse_query(query, Country.field_to_database_column())
     countries = dao.query_countries(query_dict, and_query)
-    return jsonify(countries=[country.serialize() for country in countries])
+    return get_right_format(countries, request)
 
 #City
 
 @app.route('/cities', methods=['GET'])
 def get_cities():
     cities = dao.get_cities()
-    return jsonify(cities=[city.serialize() for city in cities])
+    return get_right_format(cities, request)
 
 @app.route('/cities/country/<int:country_id>', methods=['GET'])
 def get_cities_by_country(country_id):
-    return jsonify(cities=[city.serialize() for city in dao.find_cities_by_country_id(country_id)])
+    cities = dao.find_cities_by_country_id(country_id)
+    return get_right_format(cities, request)
 
 @app.route('/cities/<int:city_id>', methods=['DELETE'])
 def delete_city_by_id(city_id):
@@ -115,28 +112,30 @@ def update_city(city_id):
 def query_cities(query):
     query_dict, and_query = parse_query(query, City.field_to_database_column())
     cities = dao.query_cities(query_dict, and_query)
-    return jsonify(cities=[city.serialize() for city in cities])
+    return get_right_format(cities, request)
 
 #Address
 
 @app.route('/addresses', methods=['GET'])
 def get_addresses():
     addresses = dao.get_addresses()
-    return jsonify(addresses=[address.serialize() for address in addresses])
+    return get_right_format(addresses, request)
 
 @app.route('/addresses/country/<int:country_id>', methods=['GET'])
 def get_addresses_by_country(country_id):
-    return jsonify(addresses=[address.serialize() for address in dao.find_addresses_by_country(country_id)])
+    addresses = dao.find_addresses_by_country(country_id)
+    return get_right_format(addresses, request)
 
 @app.route('/addresses/city/<int:city_id>', methods=['GET'])
 def get_addresses_by_city(city_id):
-    return jsonify(addresses=[address.serialize() for address in dao.find_addresses_by_city(city_id)])
+    addresses = dao.find_addresses_by_city(city_id)
+    return get_right_format(addresses, request)
 
 @app.route('/addresses/<int:address_id>', methods=['PUT'])
 def update_address(address_id):
     address = dao.find_address_by_id(address_id)
     if not request.json:
-	abort(400)
+	    abort(400)
     #get all parameters sent via curl
     dict = request.json
     #update all parameters that were sent, keep same information if a parameter has not been sent
@@ -150,7 +149,8 @@ def update_address(address_id):
     dao.update_address(address)
     #return updated object
     return jsonify({'address': address.serialize()})
-	
+
+
 @app.route('/addresses', methods=['POST'])
 def create_address():
     return dao.create_row_in_address(request)
@@ -167,28 +167,30 @@ def delete_address_by_id(address_id):
 def query_addresses(query):
     query_dict, and_query = parse_query(query, Address.field_to_database_column())
     addresses = dao.query_addresses(query_dict, and_query)
-    return jsonify(addresses=[address.serialize() for address in addresses])
+    return get_right_format(addresses, request)
 
 #Customer
 
 @app.route('/customers', methods=['GET'])
 def get_customers():
     customers = dao.get_customers()
-    return jsonify(customers=[customer.serialize() for customer in customers])
+    return get_right_format(customers, request)
 
 @app.route('/customers/country/<int:country_id>', methods=['GET'])
 def get_customers_by_country(country_id):
-    return jsonify(customers=[customer.serialize() for customer in dao.find_customers_by_country(country_id)])
+    customers = dao.find_customers_by_country(country_id)
+    return get_right_format(customers, request)
 
 @app.route('/customers/city/<int:city_id>', methods=['GET'])
 def get_customers_by_city(city_id):
-    return jsonify(customers=[customer.serialize() for customer in dao.find_customers_by_city(city_id)])
+    customers = dao.find_customers_by_city(city_id)
+    return get_right_format(customers, request)
 
 @app.route('/customers/<int:customer_id>', methods=['PUT'])
 def update_customer(customer_id):
     customer = dao.find_customer_by_id(customer_id)
     if not request.json:
-	abort(400)
+        abort(400)
     #get all parameters sent via curl
     dict = request.json
     #update all parameters that were sent, keep information same if a parameter has not been sent
@@ -217,7 +219,7 @@ def delete_customer_by_id(customer_id):
 def query_customer(query):
     query_dict, and_query = parse_query(query, Customer.field_to_database_column())
     customers = dao.query_customers(query_dict, and_query)
-    return jsonify(customers=[customer.serialize() for customer in customers])
+    return get_right_format(customers, request)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0")
