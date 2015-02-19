@@ -1,37 +1,19 @@
 #!flask/bin/python
-from flask import Flask, jsonify, request, abort, Response
-from country import Country
-from city import City
-from address import Address
-from customer import Customer
+from flask import Flask, request, abort, jsonify
 from pymysql import IntegrityError
-from conf import *
-from dicttoxml import dicttoxml
 import pymysql
 import pdb
 from dao import Dao
-from query import *
 from country import Country
 from city import City
 from address import Address
 from customer import Customer
+from utils import *
 
 app = Flask(__name__)
 app.config["DEBUG"] = True  # Only include this while you are testing your app
 
-
 dao = Dao()
-
-
-def xmlify(objects):
-    return Response(dicttoxml(objects), mimetype='application/xml')
-
-
-def get_right_format(objects, request):
-    if request.headers['Content-Type'] == 'application/xml':
-        objects = [obj.serialize() for obj in objects]
-        return xmlify(objects=[obj.serialize() for obj in objects])
-    return jsonify(objects=[obj.serialize() for obj in objects])
 
 #Country
 
