@@ -162,9 +162,21 @@ class Dao:
             'CountryID': request.form['CountryID'],
             'CountryName': request.form['CountryName']
         }
-        test = "INSERT INTO CITY (CountryID, CountryName) VALUES (CountryID={0},CountryName={1})".format(country['CountryID'],country['CountryName'])
+        test = "INSERT INTO COUNTRY (CountryID, CountryName) VALUES (CountryID={0},CountryName={1})".format(country['CountryID'],country['CountryName'])
         print test
-        self.cursor.execute("INSERT INTO CITY (CountryID, CountryName) VALUES (CountryID={0},CountryName={1})".format(country['CountryID'],country['CountryName']))
+        self.cursor.execute("INSERT INTO COUNTRY (CountryID, CountryName) VALUES (CountryID={0},CountryName={1})".format(country['CountryID'],country['CountryName']))
+        self.cursor.connection.commit()
+
+    def create_row_in_city(self,request):
+        city = {
+                'CityID': request.form['CityID'],
+                'CityName': request.form['CityName']
+                'CountryID': request.form['CountryID']
+        }
+
+        self.cursor.execute("INSERT INTO CITY (CityID, CityName, CountryID) VALUES (CityID={0},CityName={1},CountryID={2}".format(city['CityID'],city['CityName'], city['CountryID']))
+        self.cursor.connection.commit()
+
 
     def create_row_in_address(self,request):
         address = {
@@ -181,6 +193,26 @@ class Dao:
                             .format(address['AddressID'],address['Address1'],address['Address2'],address['District'],
                                     address['CityID'],address['PostalCode'],address['CountryID']))
         self.cursor.connection.commit()
+
+    def create_row_in_customer(self,request):
+    customer = {
+
+            'CustomerID'= request.json['CustomerID'],
+            'StoreID' = request.json['StoreID'],
+            'FirstName' = reuest.json['FirstName'],
+            'LastName' = request.json['LastName'],
+            'EmailID' = request.json['EmailID'],
+            'AddressID' = request.json['AddressID'];
+            'Active' = request.json['Active'],
+            'CreateDate' = request.json['CreateDate'],
+            'LastUpdate' = request.json['LastUpdate']
+
+
+    }
+
+    self.cursor.execute("INSERT INTO CUSTOMER (CustomerID, StoreID, FirstName, LastName, EmailID, AddressID, Active, CreateDate, LastUpdate) VALUES (CustomerID={0},StoreID={1},FirstName={2},LastName={3},EmailID={4},AddressID={5},Active={6}, CreateDate={7},LastUpdate={8}".format(customer['CustomerID'],customer['StoreID'],customer['FirstName'],customer['LastName'],customer['EmailID'],customer['AddressID'],customer['Active'],customer['CreateDate'],customer['LastUpdate']))
+    self.cursor.connection.commit()
+
 
     #Update methods
     def update_country(self, country):

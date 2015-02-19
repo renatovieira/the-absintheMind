@@ -96,6 +96,10 @@ def query_cities(query):
     cities = dao.query_cities(query_dict, and_query)
     return get_right_format(cities, request)
 
+@app.route('/cities', methods=['POST'])
+def create_city():
+    return dao.create_row_in_city(request)
+
 #Address
 
 @app.route('/addresses', methods=['GET'])
@@ -195,6 +199,10 @@ def delete_customer_by_id(customer_id):
         abort(404)
     else:
         return dao.delete_customer_by_id(customer_id)
+
+@app.route('/customers', methods=['POST'])
+def create_customer():
+    return dao.create_row_in_customer(request)
 
 @app.route('/customers/q="<query>"', methods=['GET'])
 def query_customer(query):
