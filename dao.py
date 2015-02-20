@@ -196,7 +196,7 @@ class Dao:
         customer = {
             'CustomerID': request.form['CustomerID'],
             'StoreID' : request.form['StoreID'],
-            'FirstName' : reuest.form['FirstName'],
+            'FirstName' : request.form['FirstName'],
             'LastName' : request.form['LastName'],
             'EmailID' : request.form['EmailID'],
             'AddressID' : request.form['AddressID'],

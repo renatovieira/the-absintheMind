@@ -12,7 +12,9 @@ class City:
         self.country_id = dict.get('CountryID')
 
     def serialize(self):
-        return self.__dict__
+        dict = self.__dict__
+        dict['link'] = 'http://localhost:5000/cities/q/id={0}'.format(self.id)
+        return dict
 
     @staticmethod
     def field_to_database_column():
