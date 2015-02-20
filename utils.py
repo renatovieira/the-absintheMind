@@ -27,5 +27,5 @@ def xmlify(objects):
 def get_right_format(objects, request):
     if request.headers['Content-Type'] == 'application/xml':
         objects = [obj.serialize() for obj in objects]
-        return xmlify(objects=[obj.serialize() for obj in objects])
+        return xmlify(objects)
     return jsonify(objects=[obj.serialize() for obj in objects])
