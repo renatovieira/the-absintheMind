@@ -157,16 +157,11 @@ class Dao:
 
     #Create methods
 
-    def create_row_in_country(self,request):
-        country = {
-            'CountryID': request.form['CountryID'],
-            'CountryName': request.form['CountryName']
-        }
-        test = "INSERT INTO COUNTRY (CountryID, CountryName) VALUES (CountryID={0},CountryName={1})".format(country['CountryID'],country['CountryName'])
-        print test
-        self.cursor.execute("INSERT INTO COUNTRY (CountryID, CountryName) VALUES (CountryID={0},CountryName={1})".format(country['CountryID'],country['CountryName']))
+    def create_row_in_country(self,country):
+        print "INSERT INTO COUNTRY (CountryID, CountryName) VALUES ({0},{1})".format(country.id, country.name)
+        self.cursor.execute("INSERT INTO COUNTRY (CountryID, CountryName) VALUES ({0},{1})".format(country.id, country.name))
         self.cursor.connection.commit()
-        return "/countries/{0}".format(country['CountryID'])
+        return "/countries/{0}".format(country.id)
 
     def create_row_in_city(self,request):
         city = {

@@ -25,7 +25,26 @@ def get_countries():
 @app.route('/countries', methods=['POST'])
 def create_country():
     #return request
-    return dao.create_row_in_country(request)
+    jf = json_or_form(request)
+    print jf
+
+    country = {}
+    if jf is 'json':
+        country = {
+            'CountryID': request.json['CountryID'],
+            'CountryName': "'{0}'".format(request.json['CountryName'])
+        }
+    elif jf is 'form':
+        country = {
+            'CountryID': request.form['CountryID'],
+            'CountryName': request.form['CountryName']
+        }
+    else:
+        abort(400)
+
+    print country
+    new_country = Country(country)
+    return dao.create_row_in_country(new_country)
 
 @app.route('/countries/<int:country_id>', methods=['DELETE'])
 def del_country_by_id(country_id):
