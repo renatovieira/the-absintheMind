@@ -49,7 +49,7 @@ def update_country(country_id):
     #return updated object
     return jsonify({'country': country.serialize()})
 
-@app.route('/countries/q="<query>"', methods=['GET'])
+@app.route('/countries/q/<query>', methods=['GET'])
 def query_countries(query):
     query_dict, and_query = parse_query(query, Country.field_to_database_column())
     countries = dao.query_countries(query_dict, and_query)
@@ -90,7 +90,7 @@ def update_city(city_id):
     #return updated object
     return jsonify({'city': city.serialize()})
 
-@app.route('/cities/q="<query>"', methods=['GET'])
+@app.route('/cities/q/<query>', methods=['GET'])
 def query_cities(query):
     query_dict, and_query = parse_query(query, City.field_to_database_column())
     cities = dao.query_cities(query_dict, and_query)
@@ -149,7 +149,7 @@ def delete_address_by_id(address_id):
     else:
         return dao.delete_address_by_id(address_id)
 
-@app.route('/addresses/q="<query>"', methods=['GET'])
+@app.route('/addresses/q/<query>', methods=['GET'])
 def query_addresses(query):
     query_dict, and_query = parse_query(query, Address.field_to_database_column())
     addresses = dao.query_addresses(query_dict, and_query)
@@ -204,7 +204,7 @@ def delete_customer_by_id(customer_id):
 def create_customer():
     return dao.create_row_in_customer(request)
 
-@app.route('/customers/q="<query>"', methods=['GET'])
+@app.route('/customers/q/<query>', methods=['GET'])
 def query_customer(query):
     query_dict, and_query = parse_query(query, Customer.field_to_database_column())
     customers = dao.query_customers(query_dict, and_query)
