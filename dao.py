@@ -180,7 +180,7 @@ class Dao:
                             " VALUES ({0},{1},{2},{3},{4},{5},{6})"
                             .format(address['AddressID'],address['Address1'],address['Address2'],address['District'],
                                     address['CityID'],address['PostalCode'],address['CountryID']))
-        self.cursor.connection.commit()
+        self.cursor.connectiona.commit()
 
     #Update methods
     def update_country(self, country):
