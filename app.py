@@ -41,9 +41,9 @@ def update_country(country_id):
     if not request.json:
         abort(400)
     #get all parameters send via curl
-    dict = request.json
+    dictionary = request.json
     #update all parameters that were sent, keep same information if a parameter has not been sent
-    country.name = dict.get('name', country.name)
+    country.name = dictionary.get('name', country.name)
     #update on the db
     dao.update_country(country)
     #return updated object
@@ -81,10 +81,10 @@ def update_city(city_id):
     if not request.json:
         abort(400)
     #get all parameters send via curl
-    dict = request.json
+    dictionary = request.json
     #update all parameters that were sent, keep same information if a parameter has not been sent
-    city.name = dict.get('name', city.name)
-    city.country_id = dict.get('country_id', city.country_id)
+    city.name = dictionary.get('name', city.name)
+    city.country_id = dictionary.get('country_id', city.country_id)
     #update on the db
     dao.update_city(city)
     #return updated object
@@ -123,14 +123,14 @@ def update_address(address_id):
     if not request.json:
         abort(400)
     #get all parameters sent via curl
-    dict = request.json
+    dictionary = request.json
     #update all parameters that were sent, keep same information if a parameter has not been sent
-    address.address1 = dict.get('address1', address.address1)
-    address.address2 = dict.get('address2', address.address2)
-    address.district = dict.get('district', address.district)
-    address.postal_code = dict.get('postal_code', address.postal_code)
-    address.city_id = dict.get('city_id', address.city_id)
-    address.country_id = dict.get('country_id', address.country_id)
+    address.address1 = dictionary.get('address1', address.address1)
+    address.address2 = dictionary.get('address2', address.address2)
+    address.district = dictionary.get('district', address.district)
+    address.postal_code = dictionary.get('postal_code', address.postal_code)
+    address.city_id = dictionary.get('city_id', address.city_id)
+    address.country_id = dictionary.get('country_id', address.country_id)
     #update on the db
     dao.update_address(address)
     #return updated object
@@ -178,15 +178,15 @@ def update_customer(customer_id):
     if not request.json:
         abort(400)
     #get all parameters sent via curl
-    dict = request.json
+    dictionary = request.json
     #update all parameters that were sent, keep information same if a parameter has not been sent
-    customer.name.first = dict.get('first_name', customer.name.first)
-    customer.name.last = dict.get('last_name', customer.name.last)
-    customer.email_id = dict.get('email_id', customer.email_id)
-    customer.store_id = dict.get('store_id', customer.store_id)
-    customer.address_id = dict.get('address_id', customer.address_id)
-    customer.active = dict.get('active', customer.active)
-    customer.create_date = dict.get('create_date', customer.create_date)
+    customer.name.first = dictionary.get('first_name', customer.name.first)
+    customer.name.last = dictionary.get('last_name', customer.name.last)
+    customer.email_id = dictionary.get('email_id', customer.email_id)
+    customer.store_id = dictionary.get('store_id', customer.store_id)
+    customer.address_id = dictionary.get('address_id', customer.address_id)
+    customer.active = dictionary.get('active', customer.active)
+    customer.create_date = dictionary.get('create_date', customer.create_date)
     #update on db
     dao.update_customer(customer)
     #return updated object
