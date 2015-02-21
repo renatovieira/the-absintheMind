@@ -1,4 +1,5 @@
 from dicttoxml import dicttoxml
+import pdb
 from flask import Response, jsonify, request
 
 
@@ -27,5 +28,15 @@ def xmlify(objects):
 def get_right_format(objects, request):
     if request.headers['Content-Type'] == 'application/xml':
         objects = [obj.serialize() for obj in objects]
-        return xmlify(objects=[obj.serialize() for obj in objects])
+        return xmlify(objects)
     return jsonify(objects=[obj.serialize() for obj in objects])
+
+
+def json_or_form(request):
+    if request.get_json():
+        return 'json'
+    elif request.form:
+        return 'form'
+    else:
+        return None
+

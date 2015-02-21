@@ -157,14 +157,23 @@ class Dao:
 
     #Create methods
 
-    def create_row_in_country(self,request):
-        country = {
-            'CountryID': request.form['CountryID'],
-            'CountryName': request.form['CountryName']
+    def create_row_in_country(self,country):
+        print "INSERT INTO COUNTRY (CountryID, CountryName) VALUES ({0},{1})".format(country.id, country.name)
+        self.cursor.execute("INSERT INTO COUNTRY (CountryID, CountryName) VALUES ({0},{1})".format(country.id, country.name))
+        self.cursor.connection.commit()
+        return "/countries/{0}".format(country.id)
+
+    def create_row_in_city(self,request):
+        city = {
+                'CityID': request.form['CityID'],
+                'CityName': request.form['CityName'],
+                'CountryID': request.form['CountryID']
         }
-        test = "INSERT INTO CITY (CountryID, CountryName) VALUES (CountryID={0},CountryName={1})".format(country['CountryID'],country['CountryName'])
-        print test
-        self.cursor.execute("INSERT INTO CITY (CountryID, CountryName) VALUES (CountryID={0},CountryName={1})".format(country['CountryID'],country['CountryName']))
+
+        self.cursor.execute("INSERT INTO CITY (CityID, CityName, CountryID) VALUES (CityID={0},CityName={1},CountryID={2})".format(city['CityID'],city['CityName'], city['CountryID']))
+        self.cursor.connection.commit()
+
+        return "/cities/{0}".format(city['CityID'])
 
     def create_row_in_address(self,request):
         address = {
@@ -181,6 +190,24 @@ class Dao:
                             .format(address['AddressID'],address['Address1'],address['Address2'],address['District'],
                                     address['CityID'],address['PostalCode'],address['CountryID']))
         self.cursor.connection.commit()
+        return "/addresses/{0}".format(address['AddressID'])
+
+    def create_row_in_customer(self,request):
+        customer = {
+            'CustomerID': request.form['CustomerID'],
+            'StoreID' : request.form['StoreID'],
+            'FirstName' : request.form['FirstName'],
+            'LastName' : request.form['LastName'],
+            'EmailID' : request.form['EmailID'],
+            'AddressID' : request.form['AddressID'],
+            'Active' : request.form['Active'],
+            'CreateDate' : request.form['CreateDate'],
+            'LastUpdate' : request.form['LastUpdate']
+        }
+
+        self.cursor.execute("INSERT INTO CUSTOMER (CustomerID, StoreID, FirstName, LastName, EmailID, AddressID, Active, CreateDate, LastUpdate) VALUES (CustomerID={0},StoreID={1},FirstName={2},LastName={3},EmailID={4},AddressID={5},Active={6}, CreateDate={7},LastUpdate={8})".format(customer['CustomerID'],customer['StoreID'],customer['FirstName'],customer['LastName'],customer['EmailID'],customer['AddressID'],customer['Active'],customer['CreateDate'],customer['LastUpdate']))
+        self.cursor.connection.commit()
+        return "/customers/{0}".format(customer['CustomerID'])
 
     #Update methods
     def update_country(self, country):
