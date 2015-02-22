@@ -174,51 +174,23 @@ class Dao:
         self.cursor.connection.commit()
         return "/countries/{0}".format(country.id)
 
-    def create_row_in_city(self,request):
-        city = {
-                'CityID': request.form['CityID'],
-                'CityName': request.form['CityName'],
-                'CountryID': request.form['CountryID']
-        }
-
-        self.cursor.execute("INSERT INTO CITY (CityID, CityName, CountryID) VALUES (CityID={0},CityName={1},CountryID={2})".format(city['CityID'],city['CityName'], city['CountryID']))
+    def create_row_in_city(self,city):
+        self.cursor.execute("INSERT INTO CITY (CityID, CityName, CountryID) VALUES ({0},{1},{2})".format(city.id, city.name, city.country_id))
         self.cursor.connection.commit()
+        return "/cities/{0}".format(city.id)
 
-        return "/cities/{0}".format(city['CityID'])
-
-    def create_row_in_address(self,request):
-        address = {
-            'AddressID' :request.form['AddressID'],
-            'Address1': request.form['Address1'],
-            'Address2':request.form['Address2'],
-            'District':request.form['District'],
-            'CityID':request.form['CityID'],
-            'PostalCode':request.form['PostalCode'],
-            'CountryID': request.form['CountryID']
-        }
+    def create_row_in_address(self,address):
         self.cursor.execute("INSERT INTO ADDRESS (AddressID, Address1, Address2, District, CityID, PostalCode, CountryID)"
                             " VALUES ({0},{1},{2},{3},{4},{5},{6})"
-                            .format(address['AddressID'],address['Address1'],address['Address2'],address['District'],
-                                    address['CityID'],address['PostalCode'],address['CountryID']))
+                            .format(address.id,address.address1, address.address2, address.district,
+                                    address.city_id, address.postal_code, address.country_id))
         self.cursor.connection.commit()
-        return "/addresses/{0}".format(address['AddressID'])
+        return "/addresses/{0}".format(address.id)
 
-    def create_row_in_customer(self,request):
-        customer = {
-            'CustomerID': request.form['CustomerID'],
-            'StoreID' : request.form['StoreID'],
-            'FirstName' : request.form['FirstName'],
-            'LastName' : request.form['LastName'],
-            'EmailID' : request.form['EmailID'],
-            'AddressID' : request.form['AddressID'],
-            'Active' : request.form['Active'],
-            'CreateDate' : request.form['CreateDate'],
-            'LastUpdate' : request.form['LastUpdate']
-        }
-
-        self.cursor.execute("INSERT INTO CUSTOMER (CustomerID, StoreID, FirstName, LastName, EmailID, AddressID, Active, CreateDate, LastUpdate) VALUES (CustomerID={0},StoreID={1},FirstName={2},LastName={3},EmailID={4},AddressID={5},Active={6}, CreateDate={7},LastUpdate={8})".format(customer['CustomerID'],customer['StoreID'],customer['FirstName'],customer['LastName'],customer['EmailID'],customer['AddressID'],customer['Active'],customer['CreateDate'],customer['LastUpdate']))
+    def create_row_in_customer(self,customer):
+        self.cursor.execute("INSERT INTO CUSTOMER (CustomerID, StoreID, FirstName, LastName, EmailID, AddressID, Active, CreateDate, LastUpdate) VALUES ({0},{1},{2},{3},{4},{5},{6},{7},{8})".format(customer.id,customer.store_id, customer.name.first, customer.name.last, customer.email_id, customer.address_id, customer.active, customer.create_date,customer.last_update))
         self.cursor.connection.commit()
-        return "/customers/{0}".format(customer['CustomerID'])
+        return "/customers/{0}".format(customer.id)
 
     #Update methods
     def update_country(self, country):
@@ -229,8 +201,8 @@ class Dao:
 
     def update_address(self, address):
         self.cursor.execute("UPDATE ADDRESS SET Address1='{0}', Address2='{1}', District='{2}', PostalCode={3}, CityID={4},"
-                            " CountryID={5} WHERE AddressID={6}".format(address.address1, address.address2, address.district,
-                                                                        address.postal_code, address.city_id, address.country_id, address.id))
+                            " CountryID={5} WHERE AddressID={6}".format(address.Address1, address.Address2, address.District,
+                                                                        address.PostalCode, address.CityID, address.CountryID, address.id))
 
     @staticmethod
     def field_to_database_column():
