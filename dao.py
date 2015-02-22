@@ -162,33 +162,60 @@ class Dao:
         else:
             self.cursor.execute("DELETE FROM {0} WHERE {1}={2}".format(x,y,y_val))
             self.cursor.connection.commit()
-            return "deleted the following row: {0}".format(temp)
+            return "deleted"
+            #return "deleted the following row: {0}".format(temp)
         #except IntegrityError:
         #    return "Foreign key constraint failure"
 
     #Create methods
 
     def create_row_in_country(self,country):
-        print "INSERT INTO COUNTRY (CountryID, CountryName) VALUES ({0},{1})".format(country.id, country.name)
-        self.cursor.execute("INSERT INTO COUNTRY (CountryID, CountryName) VALUES ({0},{1})".format(country.id, country.name))
+        #print "INSERT INTO COUNTRY (CountryID, CountryName) VALUES ({0},{1})".format(country.id, country.name)
+        if country.id is -1:
+            print "auto incre country"
+            self.cursor.execute("INSERT INTO COUNTRY (CountryName) VALUES ({0})".format(country.name))
+            country.id = self.find_id_by_y('CountryID', 'COUNTRY', 'CountryName', country.name)
+        else:
+            self.cursor.execute("INSERT INTO COUNTRY (CountryID, CountryName) VALUES ({0},{1})".format(country.id, country.name))
         self.cursor.connection.commit()
         return "/countries/{0}".format(country.id)
 
     def create_row_in_city(self,city):
-        self.cursor.execute("INSERT INTO CITY (CityID, CityName, CountryID) VALUES ({0},{1},{2})".format(city.id, city.name, city.country_id))
+        if city.id is -1:
+            print "auto incre city"
+            self.cursor.execute("INSERT INTO CITY (CityName, CountryID) VALUES ({0},{1})".format(city.name, city.country_id))
+            city.id = self.find_id_by_y('CityID', 'CITY', 'CityName', city.name)
+        else:
+            print "no incre city"
+            print "INSERT INTO CITY (CityID, CityName, CountryID) VALUES ({0},{1},{2})".format(city.id, city.name, city.country_id)
+            self.cursor.execute("INSERT INTO CITY (CityID, CityName, CountryID) VALUES ({0},{1},{2})".format(city.id, city.name, city.country_id))
         self.cursor.connection.commit()
         return "/cities/{0}".format(city.id)
 
     def create_row_in_address(self,address):
-        self.cursor.execute("INSERT INTO ADDRESS (AddressID, Address1, Address2, District, CityID, PostalCode, CountryID)"
+        if address.id is -1:
+            self.cursor.execute("INSERT INTO ADDRESS (Address1, Address2, District, CityID, PostalCode, CountryID)"
+                            " VALUES ({0},{1},{2},{3},{4},{5})"
+                            .format(address.address1, address.address2, address.district,
+                                    address.city_id, address.postal_code, address.country_id))
+            address.id = self.find_id_by_y('AddressID', 'ADDRESS', 'AddressName', address.name)
+        else:
+            self.cursor.execute("INSERT INTO ADDRESS (AddressID, Address1, Address2, District, CityID, PostalCode, CountryID)"
                             " VALUES ({0},{1},{2},{3},{4},{5},{6})"
                             .format(address.id,address.address1, address.address2, address.district,
                                     address.city_id, address.postal_code, address.country_id))
         self.cursor.connection.commit()
         return "/addresses/{0}".format(address.id)
 
+    #should be updated since we shouldn't be inputting createdate and lastupdate through the web app
     def create_row_in_customer(self,customer):
-        self.cursor.execute("INSERT INTO CUSTOMER (CustomerID, StoreID, FirstName, LastName, EmailID, AddressID, Active, CreateDate, LastUpdate) VALUES ({0},{1},{2},{3},{4},{5},{6},{7},{8})".format(customer.id,customer.store_id, customer.name.first, customer.name.last, customer.email_id, customer.address_id, customer.active, customer.create_date,customer.last_update))
+        if customer.id is -1:
+            self.cursor.execute("INSERT INTO CUSTOMER (StoreID, FirstName, LastName, EmailID, AddressID, Active, CreateDate, LastUpdate) VALUES ({0},{1},{2},{3},{4},{5},{6},{7})".format(customer.store_id, customer.name.first, customer.name.last, customer.email_id, customer.address_id, customer.active, customer.create_date,customer.last_update))
+            self.cursor.execute("SELECT CustomerID FROM CUSTOMER WHERE FirstName={0} AND LastName={1}".format(customer.name.first, customer.name.last))
+            result = self.cursor.fetchone()
+            customer.id = result['CustomerID']
+        else:
+            self.cursor.execute("INSERT INTO CUSTOMER (CustomerID, StoreID, FirstName, LastName, EmailID, AddressID, Active, CreateDate, LastUpdate) VALUES ({0},{1},{2},{3},{4},{5},{6},{7},{8})".format(customer.id,customer.store_id, customer.name.first, customer.name.last, customer.email_id, customer.address_id, customer.active, customer.create_date,customer.last_update))
         self.cursor.connection.commit()
         return "/customers/{0}".format(customer.id)
 
@@ -216,7 +243,13 @@ class Dao:
                                                           customer.store_id, customer.address_id, customer.active,
                                                           customer.create_date, customer.id))
 
+
     #Query methods
+    def find_id_by_y(self, x, table, column, y):
+        self.cursor.execute("SELECT {0} FROM {1} WHERE {2}={3}".format(x,table,column,y))
+        result = self.cursor.fetchone()
+        return result[x]
+
     def find_x_by_y_dict(self, x, y_dict, and_query):
         query = None
         for param in y_dict:

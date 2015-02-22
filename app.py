@@ -17,43 +17,55 @@ dao = Dao()
 
 #Country
 @app.route('/combined', methods=['POST'])
-def test_combine():
+def create_city_country():
     #process the request data
     jf = json_or_form(request)
-    country = {}
+    city = {}
     if jf is 'json':
         c_name = request.json['CountryName']
-        city = {
-            'CityID': request.json['CityID'],
-            'CityName': "'{0}'".format(request.json['CityName'])
-        }
+        #ideally the user shouldn't need to set an id when creating a row. This try catch statement takes care of this scenario so now one can create a city and country just with names alone
+        try:
+            city = {
+                'CityID': request.json['CityID'],
+            }
+        except KeyError:
+            city = {
+                'CityID': -1
+            }
+        city['CityName'] =  "'{0}'".format(request.json['CityName'])
     elif jf is 'form':
         c_name = request.form['CountryName']
-        city = {
-            'CityID': request.form['CityID'],
-            'CityName': request.form['CityName']
-        }
+        try:
+            city = {
+                'CityID': request.form['CityID'],
+            }
+        except KeyError:
+            city = {
+                'CityID': -1
+            }
+        city['CityName'] =  request.form['CityName']
     else:
         abort(400)
 
     # find out the country id
     temp_country = dao.find_country_by_name(c_name)
     if not temp_country:
-        #temp solution, until we change the db schema
+        # by setting CountryID to -1, a dummy value, create_row_in_country will run the autoincrement version of insert
         new_country_data = {
-            'CountryID': 100,
+            'CountryID': -1,
             'CountryName': "'{0}'".format(c_name)
         }
 
         new_country = Country(new_country_data)
         new_uri = dao.create_row_in_country(new_country)
-        #temp solution because of what create_row returns right now (uri string)
+        #temp solution because of what create_row returns right now (uri string with the id)
         city['CountryID'] = int(new_uri[(new_uri.rfind('/')+1):])
     else:
         city['CountryID'] = temp_country.id
 
-    #need new create row in city method but call it here
-    return 'hi'
+    #make a new city with the country id field now
+    new_city = City(city)
+    return dao.create_row_in_city(new_city)
 
 @app.route('/countries', methods=['GET'])
 def get_countries():
@@ -64,7 +76,6 @@ def get_countries():
 def create_country():
     #return request
     jf = json_or_form(request)
-    print jf
 
     country = {}
     if jf is 'json':
@@ -127,7 +138,7 @@ def create_city():
 
     city = {}
     if jf is 'json':
-        city = { 
+        city = {
             'CityID': request.json['CityID'],
             'CityName': "'{0}'".format(request.json['CityName']),
             'CountryID': request.json['CountryID']

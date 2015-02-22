@@ -1,0 +1,30 @@
+// creating a new address
+curl -i -H "Content-Type:application/json" -X POST -d '{"AddressID":19, "Address1":"hi hi street", "Address2":"3E", "District":"harlem", "CityID":1, "PostalCode":12345, "CountryID":1}' "http://127.0.0.1:5000/addresses"
+
+// create a new country
+curl -i -H "Content-Type:application/json" -X POST -d '{"CountryID":13, "CountryName":"Bolivia"}' "http://127.0.0.1:5000/countries" 
+
+// create a new country without json
+curl --data "CountryID=10&CountryName='england'" "http://127.0.0.1:5000/countries" 
+
+// update an address
+curl -X PUT --data "AddressID=11&Address1='blah'&Address2='3e'&District='test'&CityID=1&PostalCode=234&CountryID=2" "http://127.0.0.1:5000/addresses/11" 
+
+// get data back in xml format
+curl -i -H "Content-Type:application/xml" "http://127.0.0.1:5000/customers/3"
+curl -i -H "Content-Type:application/xml" "http://127.0.0.1:5000/addresses"
+
+// get data back in json format
+curl -i -H "Content-Type:application/json" "http://127.0.0.1:5000/customers/3"
+curl -i -H "Content-Type:application/json" "http://127.0.0.1:5000/addresses"
+
+// deleting an object by id
+curl -X DELETE "http://127.0.0.1:5000/customers/1"
+
+// combined creation method without ids
+curl -i -H "Content-Type:application/json" -X POST -d '{"CityName":"Bangkok", "CountryName":"Thailand"}' "http://127.0.0.1:5000/combined"
+
+// combined creation method with an id
+curl -i -H "Content-Type:application/json" -X POST -d '{"CityID":3, "CityName":"Boston", "CountryName":"Amerika"}' "http://127.0.0.1:5000/combined"
+
+
