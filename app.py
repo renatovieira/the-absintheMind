@@ -16,6 +16,44 @@ app.config["DEBUG"] = True  # Only include this while you are testing your app
 dao = Dao()
 
 #Country
+@app.route('/combined', methods=['POST'])
+def test_combine():
+    #process the request data
+    jf = json_or_form(request)
+    country = {}
+    if jf is 'json':
+        c_name = request.json['CountryName']
+        city = {
+            'CityID': request.json['CityID'],
+            'CityName': "'{0}'".format(request.json['CityName'])
+        }
+    elif jf is 'form':
+        c_name = request.form['CountryName']
+        city = {
+            'CityID': request.form['CityID'],
+            'CityName': request.form['CityName']
+        }
+    else:
+        abort(400)
+
+    # find out the country id
+    temp_country = dao.find_country_by_name(c_name)
+    if not temp_country:
+        #temp solution, until we change the db schema
+        new_country_data = {
+            'CountryID': 100,
+            'CountryName': "'{0}'".format(c_name)
+        }
+
+        new_country = Country(new_country_data)
+        new_uri = dao.create_row_in_country(new_country)
+        #temp solution because of what create_row returns right now (uri string)
+        city['CountryID'] = int(new_uri[(new_uri.rfind('/')+1):])
+    else:
+        city['CountryID'] = temp_country.id
+
+    #need new create row in city method but call it here
+    return 'hi'
 
 @app.route('/countries', methods=['GET'])
 def get_countries():

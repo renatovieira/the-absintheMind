@@ -55,6 +55,16 @@ class Dao:
             customers.append(Customer(row))
         return customers
 
+# find x by name
+
+    def find_country_by_name(self, country_name):
+        self.find_x_by_y('COUNTRY', 'CountryName', "'{0}'".format(country_name))
+        result = self.cursor.fetchone()
+        if result is None:
+            return False
+        country = Country(result)
+        return country
+
     def find_country_by_id(self, country_id):
         self.find_x_by_y('COUNTRY', 'CountryID', country_id)
         result = self.cursor.fetchone()
@@ -125,6 +135,7 @@ class Dao:
         return customers
 
     def find_x_by_y(self, x, y, y_val):
+        print "SELECT * FROM {0} WHERE {1}={2}".format(x,y,y_val)
         self.cursor.execute("SELECT * FROM {0} WHERE {1}={2}".format(x,y,y_val))
 
     #Delete method
