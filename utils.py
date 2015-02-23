@@ -26,11 +26,17 @@ def get_dict(query, class_dictionary, query_type):
                 return [[query_type, class_dictionary[params[0]], params[1]]]
             elif params[0].upper() == 'LIMIT' or params[0].upper() == 'OFFSET':
                 return [[None, params[0].upper(), params[1]]]
-    else:
+    elif query_type == '|':
         if '=' in query:
             params = query.split('=')
             if params[0] in class_dictionary:
                 return [[query_type, class_dictionary[params[0]], params[1]]]
+    elif query_type is None:
+        params = query.split('=')
+        if params[0] in class_dictionary:
+            return [['&', class_dictionary[params[0]], params[1]]]
+        elif params[0].upper() == 'LIMIT' or params[0].upper() == 'OFFSET':
+            return [[None, params[0].upper(), params[1]]]
 
     return query_list
 

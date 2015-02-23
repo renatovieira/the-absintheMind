@@ -265,7 +265,7 @@ class Dao:
                     query = query + " OR {0}='{1}'".format(param[1], param[2])
             elif param[1] == 'LIMIT':
                 if query is None:
-                    query = "SELECT * FROM {0}'".format(x)
+                    query = "SELECT * FROM {0}".format(x)
                 query = query + " LIMIT {0}".format(param[2])
             elif param[1] == 'OFFSET':
                 query = query + " OFFSET {0}".format(param[2])
