@@ -125,8 +125,8 @@ def update_country(country_id):
 @app.route('/countries/q/<query>/page', methods=['GET'])
 @app.route('/countries/q/<query>/page/<int:page_num>', methods=['GET'])
 def query_countries(query,page_num=1):
-    query_dict, and_query = parse_query(query, Country.field_to_database_column())
-    countries = dao.query_countries(query_dict, and_query)
+    query_dict = parse_query(query, Country.field_to_database_column())
+    countries = dao.query_countries(query_dict)
     pages = paginate(countries, 1, 'countries/page')
     return render_template('basic_page.html', page=pages[page_num-1], result=get_right_format(pages[page_num-1].items, request).get_data())
 
@@ -198,6 +198,7 @@ def update_city(city_id):
     return jsonify({'city': city.serialize()})
 
 @app.route('/cities/q/<query>', methods=['GET'])
+<<<<<<< HEAD
 @app.route('/cities/q/<query>/page', methods=['GET'])
 @app.route('/cities/q/<query>/page/<int:page_num>', methods=['GET'])
 def query_cities(query, page_num=1):
@@ -205,6 +206,12 @@ def query_cities(query, page_num=1):
     cities = dao.query_cities(query_dict, and_query)
     pages = paginate(cities, 1, 'cities/page')
     return render_template('basic_page.html', page=pages[page_num-1], result=get_right_format(pages[page_num-1].items, request).get_data())
+=======
+def query_cities(query):
+    query_dict = parse_query(query, City.field_to_database_column())
+    cities = dao.query_cities(query_dict)
+    return get_right_format(cities, request)
+>>>>>>> 847eedf9c861e57351e5902cbf6cbc6d7142f94f
 
 
 #Address
@@ -298,6 +305,7 @@ def delete_address_by_id(address_id):
         return dao.delete_address_by_id(address_id)
 
 @app.route('/addresses/q/<query>', methods=['GET'])
+<<<<<<< HEAD
 @app.route('/addresses/q/<query>/page', methods=['GET'])
 @app.route('/addresses/q/<query>/page/<int:page_num>', methods=['GET'])
 def query_addresses(query,page_num=1):
@@ -305,6 +313,12 @@ def query_addresses(query,page_num=1):
     addresses = dao.query_addresses(query_dict, and_query)
     pages = paginate(addresses, 1, 'addresses/page')
     return render_template('basic_page.html', page=pages[page_num-1], result=get_right_format(pages[page_num-1].items, request).get_data())
+=======
+def query_addresses(query):
+    query_dict = parse_query(query, Address.field_to_database_column())
+    addresses = dao.query_addresses(query_dict)
+    return get_right_format(addresses, request)
+>>>>>>> 847eedf9c861e57351e5902cbf6cbc6d7142f94f
 
 #Customer
 
@@ -402,6 +416,7 @@ def delete_customer_by_id(customer_id):
 
 
 @app.route('/customers/q/<query>', methods=['GET'])
+<<<<<<< HEAD
 @app.route('/customers/q/<query>/page', methods=['GET'])
 @app.route('/customers/q/<query>/page/<int:page_num>', methods=['GET'])
 def query_customer(query,page_num=1):
@@ -409,6 +424,12 @@ def query_customer(query,page_num=1):
     customers = dao.query_customers(query_dict, and_query)
     pages = paginate(customers, 1, 'customers/page')
     return render_template('basic_page.html', page=pages[page_num-1], result=get_right_format(pages[page_num-1].items, request).get_data())
+=======
+def query_customer(query):
+    query_dict = parse_query(query, Customer.field_to_database_column())
+    customers = dao.query_customers(query_dict)
+    return get_right_format(customers, request)
+>>>>>>> 847eedf9c861e57351e5902cbf6cbc6d7142f94f
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0")
