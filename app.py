@@ -16,6 +16,56 @@ app.config["DEBUG"] = True  # Only include this while you are testing your app
 dao = Dao()
 
 #Country
+@app.route('/combined', methods=['POST'])
+def create_city_country():
+    #process the request data
+    jf = json_or_form(request)
+    city = {}
+    if jf is 'json':
+        c_name = request.json['CountryName']
+        #ideally the user shouldn't need to set an id when creating a row. This try catch statement takes care of this scenario so now one can create a city and country just with names alone
+        try:
+            city = {
+                'CityID': request.json['CityID'],
+            }
+        except KeyError:
+            city = {
+                'CityID': -1
+            }
+        city['CityName'] =  "'{0}'".format(request.json['CityName'])
+    elif jf is 'form':
+        c_name = request.form['CountryName']
+        try:
+            city = {
+                'CityID': request.form['CityID'],
+            }
+        except KeyError:
+            city = {
+                'CityID': -1
+            }
+        city['CityName'] =  request.form['CityName']
+    else:
+        abort(400)
+
+    # find out the country id
+    temp_country = dao.find_country_by_name(c_name)
+    if not temp_country:
+        # by setting CountryID to -1, a dummy value, create_row_in_country will run the autoincrement version of insert
+        new_country_data = {
+            'CountryID': -1,
+            'CountryName': "'{0}'".format(c_name)
+        }
+
+        new_country = Country(new_country_data)
+        new_uri = dao.create_row_in_country(new_country)
+        #temp solution because of what create_row returns right now (uri string with the id)
+        city['CountryID'] = int(new_uri[(new_uri.rfind('/')+1):])
+    else:
+        city['CountryID'] = temp_country.id
+
+    #make a new city with the country id field now
+    new_city = City(city)
+    return dao.create_row_in_city(new_city)
 
 @app.route('/countries', methods=['GET'])
 def get_countries():
@@ -25,7 +75,25 @@ def get_countries():
 @app.route('/countries', methods=['POST'])
 def create_country():
     #return request
-    return dao.create_row_in_country(request)
+    jf = json_or_form(request)
+
+    country = {}
+    if jf is 'json':
+        country = {
+            'CountryID': request.json['CountryID'],
+            'CountryName': "'{0}'".format(request.json['CountryName'])
+        }
+    elif jf is 'form':
+        country = {
+            'CountryID': request.form['CountryID'],
+            'CountryName': request.form['CountryName']
+        }
+    else:
+        abort(400)
+
+    print country
+    new_country = Country(country)
+    return dao.create_row_in_country(new_country)
 
 @app.route('/countries/<int:country_id>', methods=['DELETE'])
 def del_country_by_id(country_id):
@@ -62,6 +130,32 @@ def get_cities():
     cities = dao.get_cities()
     return get_right_format(cities, request)
 
+@app.route('/cities', methods=['POST'])
+def create_city():
+    #return request
+    jf = json_or_form(request)
+    print jf
+
+    city = {}
+    if jf is 'json':
+        city = {
+            'CityID': request.json['CityID'],
+            'CityName': "'{0}'".format(request.json['CityName']),
+            'CountryID': request.json['CountryID']
+        }
+    elif jf is 'form':
+        city = {
+            'CityID': request.form['CityID'],
+            'CityName': request.form['CityName'],
+            'CountryID': request.form['CountryID']
+        }
+    else:
+        abort(400)
+
+    print city
+    new_city = City(city)
+    return dao.create_row_in_city(new_city)
+
 @app.route('/cities/country/<int:country_id>', methods=['GET'])
 def get_cities_by_country(country_id):
     cities = dao.find_cities_by_country_id(country_id)
@@ -96,9 +190,6 @@ def query_cities(query):
     cities = dao.query_cities(query_dict)
     return get_right_format(cities, request)
 
-@app.route('/cities', methods=['POST'])
-def create_city():
-    return dao.create_row_in_city(request)
 
 #Address
 
@@ -116,6 +207,40 @@ def get_addresses_by_country(country_id):
 def get_addresses_by_city(city_id):
     addresses = dao.find_addresses_by_city(city_id)
     return get_right_format(addresses, request)
+
+@app.route('/addresses', methods=['POST'])
+def create_address():
+    #return request
+    jf = json_or_form(request)
+    print jf
+
+    address = {}
+    if jf is 'json':
+        address = {
+            'AddressID': request.json['AddressID'],
+            'Address1': "'{0}'".format(request.json['Address1']),
+            'Address2': "'{0}'".format(request.json['Address2']),
+            'District': "'{0}'".format(request.json['District']),
+            'CityID': request.json['CityID'],
+            'PostalCode': request.json['PostalCode'],
+            'CountryID': request.json['CountryID'],
+        }
+    elif jf is 'form':
+        address = {
+            'AddressID' :request.form['AddressID'],
+            'Address1': request.form['Address1'],
+            'Address2':request.form['Address2'],
+            'District':request.form['District'],
+            'CityID':request.form['CityID'],
+            'PostalCode':request.form['PostalCode'],
+            'CountryID': request.form['CountryID']
+        }
+    else:
+        abort(400)
+
+    print address
+    new_address = Address(address)
+    return dao.create_row_in_address(new_address)
 
 @app.route('/addresses/<int:address_id>', methods=['PUT'])
 def update_address(address_id):
@@ -137,9 +262,6 @@ def update_address(address_id):
     return jsonify({'address': address.serialize()})
 
 
-@app.route('/addresses', methods=['POST'])
-def create_address():
-    return dao.create_row_in_address(request)
 
 @app.route('/addresses/<int:address_id>', methods=['DELETE'])
 def delete_address_by_id(address_id):
@@ -172,6 +294,46 @@ def get_customers_by_city(city_id):
     customers = dao.find_customers_by_city(city_id)
     return get_right_format(customers, request)
 
+
+
+@app.route('/customers', methods=['POST'])
+def create_customer():
+    #return request
+    jf = json_or_form(request)
+    print jf
+
+    customer = {}
+    if jf is 'json':
+        customer = {
+            'CustomerID': request.json['CustomerID'],
+            'StoreID': request.json['StoreID'],
+            'FirstName': "'{0}'".format(request.json['FirstName']),
+            'LastName': "'{0}'".format(request.json['LastName']),
+            'EmailID': "'{0}'".format(request.json['EmailID']),
+            'AddressID': request.json['AddressID'],
+            'Active': "'{0}'".format(request.json['Active']),
+            'CreateDate': "'{0}'".format(request.json['CreateDate']),
+            'LastUpdate': "'{0}'".format(request.json['LastUpdate'])
+        }
+    elif jf is 'form':
+        customer = {
+           'CustomerID': request.form['CustomerID'],
+            'StoreID' : request.form['StoreID'],
+            'FirstName' : request.form['FirstName'],
+            'LastName' : request.form['LastName'],
+            'EmailID' : request.form['EmailID'],
+            'AddressID' : request.form['AddressID'],
+            'Active' : request.form['Active'],
+            'CreateDate' : request.form['CreateDate'],
+            'LastUpdate' : request.form['LastUpdate']
+        }
+    else:
+        abort(400)
+
+    print customer
+    new_customer = Customer(customer)
+    return dao.create_row_in_customer(new_customer)
+
 @app.route('/customers/<int:customer_id>', methods=['PUT'])
 def update_customer(customer_id):
     customer = dao.find_customer_by_id(customer_id)
@@ -200,9 +362,6 @@ def delete_customer_by_id(customer_id):
     else:
         return dao.delete_customer_by_id(customer_id)
 
-@app.route('/customers', methods=['POST'])
-def create_customer():
-    return dao.create_row_in_customer(request)
 
 @app.route('/customers/q/<query>', methods=['GET'])
 def query_customer(query):
