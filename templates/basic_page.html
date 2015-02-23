@@ -4,9 +4,11 @@
 </head>
 
 <body>
+    {% if result %}
     <pre>
         {{ result|safe }}
     </pre>
+    {% endif %}
     <br>
 
     {% if page.prev_page %}
