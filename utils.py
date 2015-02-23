@@ -46,11 +46,11 @@ def xmlify(objects):
     return Response(dicttoxml(objects), mimetype='application/xml')
 
 
-def get_right_format(objects, request):
+def get_right_format(objects, request, dao):
     if request.headers['Content-Type'] == 'application/xml':
-        objects = [obj.serialize() for obj in objects]
+        objects = [obj.serialize(dao) for obj in objects]
         return xmlify(objects)
-    return jsonify(objects=[obj.serialize() for obj in objects])
+    return jsonify(objects=[obj.serialize(dao) for obj in objects])
 
 
 def json_or_form(request):

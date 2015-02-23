@@ -7,10 +7,10 @@ class Country:
         self.id = dict.get('CountryID')
         self.name = dict.get('CountryName')
 
-    def serialize(self):
-        dict = self.__dict__
-        dict['link'] = 'http://localhost:5000/countries/q/id={0}'.format(self.id)
-        return dict
+    def serialize(self, dao):
+        serialize_dict = self.__dict__
+        serialize_dict['link'] = 'http://localhost:5000/countries/q/id={0}'.format(self.id)
+        return serialize_dict
 
     @staticmethod
     def field_to_database_column():

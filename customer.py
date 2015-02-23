@@ -19,11 +19,15 @@ class Customer:
         self.create_date = str(dict.get('CreateDate'))
         self.last_update = str(dict.get('LastUpdate'))
 
-    def serialize(self):
+    def serialize(self, dao):
         self.name = self.name.serialize()
-        dict = self.__dict__
-        dict['link'] = 'http://localhost:5000/customers/q/id={0}'.format(self.id)
-        return dict
+        serialize_dict = {}
+        for key in self.__dict__:
+            if key != 'address_id':
+                serialize_dict[key] = self.__dict__[key]
+        serialize_dict['link'] = 'http://localhost:5000/customers/q/id={0}'.format(self.id)
+        serialize_dict['address'] = dao.find_address_by_id(self.address_id).serialize(dao)
+        return serialize_dict
 
     @staticmethod
     def field_to_database_column():

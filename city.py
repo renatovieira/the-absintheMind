@@ -11,10 +11,14 @@ class City:
         self.name = dict.get('CityName')
         self.country_id = dict.get('CountryID')
 
-    def serialize(self):
-        dict = self.__dict__
-        dict['link'] = 'http://localhost:5000/cities/q/id={0}'.format(self.id)
-        return dict
+    def serialize(self, dao):
+        serialize_dict = {}
+        for key in self.__dict__:
+            if key != 'country_id':
+                serialize_dict[key] = self.__dict__[key]
+        serialize_dict['link'] = 'http://localhost:5000/cities/q/id={0}'.format(self.id)
+        serialize_dict['country'] = dao.find_country_by_id(self.country_id).serialize(dao)
+        return serialize_dict
 
     @staticmethod
     def field_to_database_column():

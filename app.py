@@ -70,7 +70,7 @@ def create_city_country():
 @app.route('/countries', methods=['GET'])
 def get_countries():
     countries = dao.get_countries()
-    return get_right_format(countries, request)
+    return get_right_format(countries, request, dao)
 
 @app.route('/countries', methods=['POST'])
 def create_country():
@@ -115,20 +115,20 @@ def update_country(country_id):
     #update on the db
     dao.update_country(country)
     #return updated object
-    return jsonify({'country': country.serialize()})
+    return jsonify({'country': country.serialize(dao)})
 
 @app.route('/countries/q/<query>', methods=['GET'])
 def query_countries(query):
     query_dict = parse_query(query, Country.field_to_database_column())
     countries = dao.query_countries(query_dict)
-    return get_right_format(countries, request)
+    return get_right_format(countries, request, dao)
 
 #City
 
 @app.route('/cities', methods=['GET'])
 def get_cities():
     cities = dao.get_cities()
-    return get_right_format(cities, request)
+    return get_right_format(cities, request, dao)
 
 @app.route('/cities', methods=['POST'])
 def create_city():
@@ -159,7 +159,7 @@ def create_city():
 @app.route('/cities/country/<int:country_id>', methods=['GET'])
 def get_cities_by_country(country_id):
     cities = dao.find_cities_by_country_id(country_id)
-    return get_right_format(cities, request)
+    return get_right_format(cities, request, dao)
 
 @app.route('/cities/<int:city_id>', methods=['DELETE'])
 def delete_city_by_id(city_id):
@@ -182,13 +182,13 @@ def update_city(city_id):
     #update on the db
     dao.update_city(city)
     #return updated object
-    return jsonify({'city': city.serialize()})
+    return jsonify({'city': city.serialize(dao)})
 
 @app.route('/cities/q/<query>', methods=['GET'])
 def query_cities(query):
     query_dict = parse_query(query, City.field_to_database_column())
     cities = dao.query_cities(query_dict)
-    return get_right_format(cities, request)
+    return get_right_format(cities, request, dao)
 
 
 #Address
@@ -196,17 +196,17 @@ def query_cities(query):
 @app.route('/addresses', methods=['GET'])
 def get_addresses():
     addresses = dao.get_addresses()
-    return get_right_format(addresses, request)
+    return get_right_format(addresses, request, dao)
 
 @app.route('/addresses/country/<int:country_id>', methods=['GET'])
 def get_addresses_by_country(country_id):
     addresses = dao.find_addresses_by_country(country_id)
-    return get_right_format(addresses, request)
+    return get_right_format(addresses, request, dao)
 
 @app.route('/addresses/city/<int:city_id>', methods=['GET'])
 def get_addresses_by_city(city_id):
     addresses = dao.find_addresses_by_city(city_id)
-    return get_right_format(addresses, request)
+    return get_right_format(addresses, request, dao)
 
 @app.route('/addresses', methods=['POST'])
 def create_address():
@@ -259,7 +259,7 @@ def update_address(address_id):
     #update on the db
     dao.update_address(address)
     #return updated object
-    return jsonify({'address': address.serialize()})
+    return jsonify({'address': address.serialize(dao)})
 
 
 
@@ -275,24 +275,24 @@ def delete_address_by_id(address_id):
 def query_addresses(query):
     query_dict = parse_query(query, Address.field_to_database_column())
     addresses = dao.query_addresses(query_dict)
-    return get_right_format(addresses, request)
+    return get_right_format(addresses, request, dao)
 
 #Customer
 
 @app.route('/customers', methods=['GET'])
 def get_customers():
     customers = dao.get_customers()
-    return get_right_format(customers, request)
+    return get_right_format(customers, request, dao)
 
 @app.route('/customers/country/<int:country_id>', methods=['GET'])
 def get_customers_by_country(country_id):
     customers = dao.find_customers_by_country(country_id)
-    return get_right_format(customers, request)
+    return get_right_format(customers, request, dao)
 
 @app.route('/customers/city/<int:city_id>', methods=['GET'])
 def get_customers_by_city(city_id):
     customers = dao.find_customers_by_city(city_id)
-    return get_right_format(customers, request)
+    return get_right_format(customers, request, dao)
 
 
 
@@ -352,7 +352,7 @@ def update_customer(customer_id):
     #update on db
     dao.update_customer(customer)
     #return updated object
-    return jsonify({'customer': customer.serialize()})
+    return jsonify({'customer': customer.serialize(dao)})
 
 @app.route('/customers/<int:customer_id>', methods=['DELETE'])
 def delete_customer_by_id(customer_id):
@@ -367,7 +367,7 @@ def delete_customer_by_id(customer_id):
 def query_customer(query):
     query_dict = parse_query(query, Customer.field_to_database_column())
     customers = dao.query_customers(query_dict)
-    return get_right_format(customers, request)
+    return get_right_format(customers, request, dao)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0")
