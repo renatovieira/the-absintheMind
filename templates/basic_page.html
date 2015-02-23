@@ -1,0 +1,21 @@
+<!doctype html>
+<head>
+    <title>The Absinthe-Mind</title>
+</head>
+
+<body>
+    <pre>
+        {{ result|safe }}
+    </pre>
+    <br>
+
+    {% if page.prev_page %}
+        <a href= "{{ page.prev_page }}">Previous</a>
+    {% endif %}
+
+    {% if page.next_page %}
+        <a href= "{{ page.next_page }}">Next</a>
+    {% endif %}
+
+</body>
+
