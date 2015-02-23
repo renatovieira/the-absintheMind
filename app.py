@@ -1,5 +1,5 @@
 #!flask/bin/python
-from flask import Flask, request, abort, jsonify
+from flask import Flask, request, abort, jsonify, render_template
 from pymysql import IntegrityError
 import pymysql
 import pdb
@@ -8,6 +8,7 @@ from country import Country
 from city import City
 from address import Address
 from customer import Customer
+from page_obj import Page
 from utils import *
 
 app = Flask(__name__)
@@ -68,9 +69,12 @@ def create_city_country():
     return dao.create_row_in_city(new_city)
 
 @app.route('/countries', methods=['GET'])
-def get_countries():
+@app.route('/countries/page', methods=['GET'])
+@app.route('/countries/page/<int:page_num>', methods=['GET'])
+def get_countries(page_num=1):
     countries = dao.get_countries()
-    return get_right_format(countries, request)
+    pages = paginate(countries, 1, 'countries/page')
+    return render_template('basic_page.html', page=pages[page_num-1], result=get_right_format(pages[page_num-1].items, request).get_data())
 
 @app.route('/countries', methods=['POST'])
 def create_country():
@@ -118,17 +122,23 @@ def update_country(country_id):
     return jsonify({'country': country.serialize()})
 
 @app.route('/countries/q/<query>', methods=['GET'])
-def query_countries(query):
+@app.route('/countries/q/<query>/page', methods=['GET'])
+@app.route('/countries/q/<query>/page/<int:page_num>', methods=['GET'])
+def query_countries(query,page_num=1):
     query_dict, and_query = parse_query(query, Country.field_to_database_column())
     countries = dao.query_countries(query_dict, and_query)
-    return get_right_format(countries, request)
+    pages = paginate(countries, 1, 'countries/page')
+    return render_template('basic_page.html', page=pages[page_num-1], result=get_right_format(pages[page_num-1].items, request).get_data())
 
 #City
 
 @app.route('/cities', methods=['GET'])
-def get_cities():
+@app.route('/cities/page', methods=['GET'])
+@app.route('/cities/page/<int:page_num>', methods=['GET'])
+def get_cities(page_num=1):
     cities = dao.get_cities()
-    return get_right_format(cities, request)
+    pages = paginate(cities, 1, 'cities/page')
+    return render_template('basic_page.html', page=pages[page_num-1], result=get_right_format(pages[page_num-1].items, request).get_data())
 
 @app.route('/cities', methods=['POST'])
 def create_city():
@@ -157,9 +167,12 @@ def create_city():
     return dao.create_row_in_city(new_city)
 
 @app.route('/cities/country/<int:country_id>', methods=['GET'])
-def get_cities_by_country(country_id):
+@app.route('/cities/country/<int:country_id>/page', methods=['GET'])
+@app.route('/cities/country/<int:country_id>/page/<int:page_num>', methods=['GET'])
+def get_cities_by_country(country_id, page_num=1):
     cities = dao.find_cities_by_country_id(country_id)
-    return get_right_format(cities, request)
+    pages = paginate(cities, 1, 'cities/page')
+    return render_template('basic_page.html', page=pages[page_num-1], result=get_right_format(pages[page_num-1].items, request).get_data())
 
 @app.route('/cities/<int:city_id>', methods=['DELETE'])
 def delete_city_by_id(city_id):
@@ -185,28 +198,41 @@ def update_city(city_id):
     return jsonify({'city': city.serialize()})
 
 @app.route('/cities/q/<query>', methods=['GET'])
-def query_cities(query):
+@app.route('/cities/q/<query>/page', methods=['GET'])
+@app.route('/cities/q/<query>/page/<int:page_num>', methods=['GET'])
+def query_cities(query, page_num=1):
     query_dict, and_query = parse_query(query, City.field_to_database_column())
     cities = dao.query_cities(query_dict, and_query)
-    return get_right_format(cities, request)
+    pages = paginate(cities, 1, 'cities/page')
+    return render_template('basic_page.html', page=pages[page_num-1], result=get_right_format(pages[page_num-1].items, request).get_data())
 
 
 #Address
 
 @app.route('/addresses', methods=['GET'])
-def get_addresses():
+@app.route('/addresses/page', methods=['GET'])
+@app.route('/addresses/page/<int:page_num>', methods=['GET'])
+def get_addresses(page_num=1):
     addresses = dao.get_addresses()
-    return get_right_format(addresses, request)
+    pages = paginate(addresses, 1, 'addresses/page')
+    return render_template('basic_page.html', page=pages[page_num-1], result=get_right_format(pages[page_num-1].items, request).get_data())
+
 
 @app.route('/addresses/country/<int:country_id>', methods=['GET'])
-def get_addresses_by_country(country_id):
+@app.route('/addresses/country/<int:country_id>/page', methods=['GET'])
+@app.route('/addresses/country/<int:country_id>/page/<int:page_num>', methods=['GET'])
+def get_addresses_by_country(country_id, page_num=1):
     addresses = dao.find_addresses_by_country(country_id)
-    return get_right_format(addresses, request)
+    pages = paginate(addresses, 1, 'addresses/page')
+    return render_template('basic_page.html', page=pages[page_num-1], result=get_right_format(pages[page_num-1].items, request).get_data())
 
 @app.route('/addresses/city/<int:city_id>', methods=['GET'])
-def get_addresses_by_city(city_id):
+@app.route('/addresses/city/<int:city_id>/page', methods=['GET'])
+@app.route('/addresses/city/<int:city_id>/page/<int:page_num>', methods=['GET'])
+def get_addresses_by_city(city_id, page_num=1):
     addresses = dao.find_addresses_by_city(city_id)
-    return get_right_format(addresses, request)
+    pages = paginate(addresses, 1, 'addresses/page')
+    return render_template('basic_page.html', page=pages[page_num-1], result=get_right_format(pages[page_num-1].items, request).get_data())
 
 @app.route('/addresses', methods=['POST'])
 def create_address():
@@ -272,27 +298,39 @@ def delete_address_by_id(address_id):
         return dao.delete_address_by_id(address_id)
 
 @app.route('/addresses/q/<query>', methods=['GET'])
-def query_addresses(query):
+@app.route('/addresses/q/<query>/page', methods=['GET'])
+@app.route('/addresses/q/<query>/page/<int:page_num>', methods=['GET'])
+def query_addresses(query,page_num=1):
     query_dict, and_query = parse_query(query, Address.field_to_database_column())
     addresses = dao.query_addresses(query_dict, and_query)
-    return get_right_format(addresses, request)
+    pages = paginate(addresses, 1, 'addresses/page')
+    return render_template('basic_page.html', page=pages[page_num-1], result=get_right_format(pages[page_num-1].items, request).get_data())
 
 #Customer
 
 @app.route('/customers', methods=['GET'])
-def get_customers():
+@app.route('/customers/page', methods=['GET'])
+@app.route('/customers/page/<int:page_num>', methods=['GET'])
+def get_customers(page_num=1):
     customers = dao.get_customers()
-    return get_right_format(customers, request)
+    pages = paginate(customers, 1, 'customers/page')
+    return render_template('basic_page.html', page=pages[page_num-1], result=get_right_format(pages[page_num-1].items, request).get_data())
 
 @app.route('/customers/country/<int:country_id>', methods=['GET'])
-def get_customers_by_country(country_id):
+@app.route('/customers/country/<int:country_id>/page', methods=['GET'])
+@app.route('/customers/country/<int:country_id>/page/<int:page_num>', methods=['GET'])
+def get_customers_by_country(country_id, page_num=1):
     customers = dao.find_customers_by_country(country_id)
-    return get_right_format(customers, request)
+    pages = paginate(customers, 1, 'customers/page')
+    return render_template('basic_page.html', page=pages[page_num-1], result=get_right_format(pages[page_num-1].items, request).get_data())
 
 @app.route('/customers/city/<int:city_id>', methods=['GET'])
-def get_customers_by_city(city_id):
+@app.route('/customers/city/<int:city_id>/page', methods=['GET'])
+@app.route('/customers/city/<int:city_id>/page/<int:page_num>', methods=['GET'])
+def get_customers_by_city(city_id, page_num=1):
     customers = dao.find_customers_by_city(city_id)
-    return get_right_format(customers, request)
+    pages = paginate(customers, 1, 'customers/page')
+    return render_template('basic_page.html', page=pages[page_num-1], result=get_right_format(pages[page_num-1].items, request).get_data())
 
 
 
@@ -364,10 +402,13 @@ def delete_customer_by_id(customer_id):
 
 
 @app.route('/customers/q/<query>', methods=['GET'])
-def query_customer(query):
+@app.route('/customers/q/<query>/page', methods=['GET'])
+@app.route('/customers/q/<query>/page/<int:page_num>', methods=['GET'])
+def query_customer(query,page_num=1):
     query_dict, and_query = parse_query(query, Customer.field_to_database_column())
     customers = dao.query_customers(query_dict, and_query)
-    return get_right_format(customers, request)
+    pages = paginate(customers, 1, 'customers/page')
+    return render_template('basic_page.html', page=pages[page_num-1], result=get_right_format(pages[page_num-1].items, request).get_data())
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0")
