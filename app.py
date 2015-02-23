@@ -74,7 +74,7 @@ def create_city_country():
 def get_countries(page_num=1):
     countries = dao.get_countries()
     pages = paginate(countries, 1, 'countries/page')
-    return render_template('basic_page.html', page=pages[page_num-1], result=get_right_format(pages[page_num-1].items, request).get_data())
+    return render_template('basic_page.html', page=pages[page_num-1], result=get_right_format(pages[page_num-1].items, request, dao).get_data())
 
 @app.route('/countries', methods=['POST'])
 def create_country():
@@ -119,7 +119,7 @@ def update_country(country_id):
     #update on the db
     dao.update_country(country)
     #return updated object
-    return jsonify({'country': country.serialize()})
+    return jsonify({'country': country.serialize(dao)})
 
 @app.route('/countries/q/<query>', methods=['GET'])
 @app.route('/countries/q/<query>/page', methods=['GET'])
@@ -128,7 +128,7 @@ def query_countries(query,page_num=1):
     query_dict = parse_query(query, Country.field_to_database_column())
     countries = dao.query_countries(query_dict)
     pages = paginate(countries, 1, 'countries/page')
-    return render_template('basic_page.html', page=pages[page_num-1], result=get_right_format(pages[page_num-1].items, request).get_data())
+    return render_template('basic_page.html', page=pages[page_num-1], result=get_right_format(pages[page_num-1].items, request, dao).get_data())
 
 #City
 
@@ -138,7 +138,7 @@ def query_countries(query,page_num=1):
 def get_cities(page_num=1):
     cities = dao.get_cities()
     pages = paginate(cities, 1, 'cities/page')
-    return render_template('basic_page.html', page=pages[page_num-1], result=get_right_format(pages[page_num-1].items, request).get_data())
+    return render_template('basic_page.html', page=pages[page_num-1], result=get_right_format(pages[page_num-1].items, request, dao).get_data())
 
 @app.route('/cities', methods=['POST'])
 def create_city():
@@ -172,7 +172,7 @@ def create_city():
 def get_cities_by_country(country_id, page_num=1):
     cities = dao.find_cities_by_country_id(country_id)
     pages = paginate(cities, 1, 'cities/page')
-    return render_template('basic_page.html', page=pages[page_num-1], result=get_right_format(pages[page_num-1].items, request).get_data())
+    return render_template('basic_page.html', page=pages[page_num-1], result=get_right_format(pages[page_num-1].items, request, dao).get_data())
 
 @app.route('/cities/<int:city_id>', methods=['DELETE'])
 def delete_city_by_id(city_id):
@@ -195,7 +195,7 @@ def update_city(city_id):
     #update on the db
     dao.update_city(city)
     #return updated object
-    return jsonify({'city': city.serialize()})
+    return jsonify({'city': city.serialize(dao)})
 
 @app.route('/cities/q/<query>', methods=['GET'])
 @app.route('/cities/q/<query>/page', methods=['GET'])
@@ -204,7 +204,7 @@ def query_cities(query, page_num=1):
     query_dict = parse_query(query, City.field_to_database_column())
     cities = dao.query_cities(query_dict)
     pages = paginate(cities, 1, 'cities/page')
-    return render_template('basic_page.html', page=pages[page_num-1], result=get_right_format(pages[page_num-1].items, request).get_data())
+    return render_template('basic_page.html', page=pages[page_num-1], result=get_right_format(pages[page_num-1].items, request, dao).get_data())
 
 #Address
 
@@ -214,8 +214,7 @@ def query_cities(query, page_num=1):
 def get_addresses(page_num=1):
     addresses = dao.get_addresses()
     pages = paginate(addresses, 1, 'addresses/page')
-    return render_template('basic_page.html', page=pages[page_num-1], result=get_right_format(pages[page_num-1].items, request).get_data())
-
+    return render_template('basic_page.html', page=pages[page_num-1], result=get_right_format(pages[page_num-1].items, request, dao).get_data())
 
 @app.route('/addresses/country/<int:country_id>', methods=['GET'])
 @app.route('/addresses/country/<int:country_id>/page', methods=['GET'])
@@ -223,7 +222,7 @@ def get_addresses(page_num=1):
 def get_addresses_by_country(country_id, page_num=1):
     addresses = dao.find_addresses_by_country(country_id)
     pages = paginate(addresses, 1, 'addresses/page')
-    return render_template('basic_page.html', page=pages[page_num-1], result=get_right_format(pages[page_num-1].items, request).get_data())
+    return render_template('basic_page.html', page=pages[page_num-1], result=get_right_format(pages[page_num-1].items, request, dao).get_data())
 
 @app.route('/addresses/city/<int:city_id>', methods=['GET'])
 @app.route('/addresses/city/<int:city_id>/page', methods=['GET'])
@@ -231,7 +230,7 @@ def get_addresses_by_country(country_id, page_num=1):
 def get_addresses_by_city(city_id, page_num=1):
     addresses = dao.find_addresses_by_city(city_id)
     pages = paginate(addresses, 1, 'addresses/page')
-    return render_template('basic_page.html', page=pages[page_num-1], result=get_right_format(pages[page_num-1].items, request).get_data())
+    return render_template('basic_page.html', page=pages[page_num-1], result=get_right_format(pages[page_num-1].items, request, dao).get_data())
 
 @app.route('/addresses', methods=['POST'])
 def create_address():
@@ -284,7 +283,7 @@ def update_address(address_id):
     #update on the db
     dao.update_address(address)
     #return updated object
-    return jsonify({'address': address.serialize()})
+    return jsonify({'address': address.serialize(dao)})
 
 
 
@@ -303,7 +302,7 @@ def query_addresses(query,page_num=1):
     query_dict = parse_query(query, Address.field_to_database_column())
     addresses = dao.query_addresses(query_dict)
     pages = paginate(addresses, 1, 'addresses/page')
-    return render_template('basic_page.html', page=pages[page_num-1], result=get_right_format(pages[page_num-1].items, request).get_data())
+    return render_template('basic_page.html', page=pages[page_num-1], result=get_right_format(pages[page_num-1].items, request, dao).get_data())
 
 #Customer
 
@@ -313,7 +312,7 @@ def query_addresses(query,page_num=1):
 def get_customers(page_num=1):
     customers = dao.get_customers()
     pages = paginate(customers, 1, 'customers/page')
-    return render_template('basic_page.html', page=pages[page_num-1], result=get_right_format(pages[page_num-1].items, request).get_data())
+    return render_template('basic_page.html', page=pages[page_num-1], result=get_right_format(pages[page_num-1].items, request, dao).get_data())
 
 @app.route('/customers/country/<int:country_id>', methods=['GET'])
 @app.route('/customers/country/<int:country_id>/page', methods=['GET'])
@@ -321,7 +320,7 @@ def get_customers(page_num=1):
 def get_customers_by_country(country_id, page_num=1):
     customers = dao.find_customers_by_country(country_id)
     pages = paginate(customers, 1, 'customers/page')
-    return render_template('basic_page.html', page=pages[page_num-1], result=get_right_format(pages[page_num-1].items, request).get_data())
+    return render_template('basic_page.html', page=pages[page_num-1], result=get_right_format(pages[page_num-1].items, request, dao).get_data())
 
 @app.route('/customers/city/<int:city_id>', methods=['GET'])
 @app.route('/customers/city/<int:city_id>/page', methods=['GET'])
@@ -329,9 +328,7 @@ def get_customers_by_country(country_id, page_num=1):
 def get_customers_by_city(city_id, page_num=1):
     customers = dao.find_customers_by_city(city_id)
     pages = paginate(customers, 1, 'customers/page')
-    return render_template('basic_page.html', page=pages[page_num-1], result=get_right_format(pages[page_num-1].items, request).get_data())
-
-
+    return render_template('basic_page.html', page=pages[page_num-1], result=get_right_format(pages[page_num-1].items, request, dao).get_data())
 
 @app.route('/customers', methods=['POST'])
 def create_customer():
@@ -389,7 +386,7 @@ def update_customer(customer_id):
     #update on db
     dao.update_customer(customer)
     #return updated object
-    return jsonify({'customer': customer.serialize()})
+    return jsonify({'customer': customer.serialize(dao)})
 
 @app.route('/customers/<int:customer_id>', methods=['DELETE'])
 def delete_customer_by_id(customer_id):
@@ -407,7 +404,7 @@ def query_customer(query,page_num=1):
     query_dict = parse_query(query, Customer.field_to_database_column())
     customers = dao.query_customers(query_dict)
     pages = paginate(customers, 1, 'customers/page')
-    return render_template('basic_page.html', page=pages[page_num-1], result=get_right_format(pages[page_num-1].items, request).get_data())
+    return render_template('basic_page.html', page=pages[page_num-1], result=get_right_format(pages[page_num-1].items, request, dao).get_data())
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0")
