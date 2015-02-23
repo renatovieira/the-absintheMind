@@ -3,21 +3,36 @@ from flask import Response, jsonify, request
 
 
 def parse_query(query, class_dictionary):
+    return get_dict(query, class_dictionary, None)
+
+
+def get_dict(query, class_dictionary, query_type):
+    query_list = []
     if '&' in query:
-        return get_dict(query, class_dictionary, '&'), True
-    return get_dict(query, class_dictionary, '|'), False
+        subqueries = query.split('&')
+        for subquery in subqueries:
+            subquery_list = get_dict(subquery, class_dictionary, '&')
+            query_list.extend(subquery_list)
+    elif '|' in query:
+        subqueries = query.split('|')
+        for subquery in subqueries:
+            subquery_list = get_dict(subquery, class_dictionary, '|')
+            query_list.extend(subquery_list)
+    elif query_type == '&':
+        if '=' in query:
+            params = query.split('=')
+            if params[0] in class_dictionary:
+                return [[query_type, class_dictionary[params[0]], params[1]]]
+            elif params[0].upper() == 'LIMIT' or params[0].upper() == 'OFFSET':
+                return [[None, params[0].upper(), params[1]]]
+    else:
+        if '=' in query:
+            params = query.split('=')
+            if params[0] in class_dictionary:
+                return [[query_type, class_dictionary[params[0]], params[1]]]
 
+    return query_list
 
-def get_dict(query, class_dictionary, delimiter):
-    query_dict = []
-    params = query.split(delimiter)
-    for param in params:
-        val = param.split("=")
-        if val[0] in class_dictionary:
-            query_dict.append([class_dictionary.get(val[0]), val[1]])
-        elif val[0].upper() == 'OFFSET' or val[0].upper() == 'LIMIT':
-            query_dict.append([val[0].upper(), val[1]])
-    return query_dict
 
 
 def xmlify(objects):
