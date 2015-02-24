@@ -28,8 +28,3 @@ curl -i -H "Content-Type:application/json" -X POST -d '{"CityName":"Bangkok", "C
 curl -i -H "Content-Type:application/json" -X POST -d '{"CityID":3, "CityName":"Boston", "CountryName":"Amerika"}' "http://127.0.0.1:5000/combined"
 
 
-http://127.0.0.1:5000/cities/q/name=Paris
-http://127.0.0.1:5000/addresses/q/district=Manhattan&postal_code=10025
-http://127.0.0.1:5000/countries/q/limit=2
-http://127.0.0.1:5000/customers/q/store_id=2|id=1&limit=1
-http://127.0.0.1:5000/customers/q/store_id=2|id=1&limit=1&offset=1
