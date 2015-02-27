@@ -112,7 +112,7 @@ def del_country_by_id(country_id):
     if not temp:
         abort(404)
     else:
-        return dao.delete_country_by_id(country_id)
+        return get_countries()
 
 @app.route('/countries/<int:country_id>', methods=['PUT'])
 def update_country(country_id):
@@ -200,7 +200,7 @@ def delete_city_by_id(city_id):
     if not temp:
         abort(404)
     else:
-        return dao.delete_city_by_id(city_id)
+        return get_cities()
 
 @app.route('/cities/<int:city_id>', methods=['PUT'])
 def update_city(city_id):
@@ -329,7 +329,7 @@ def delete_address_by_id(address_id):
     if not temp:
         abort(404)
     else:
-        return dao.delete_address_by_id(address_id)
+        return get_addresses()
 
 @app.route('/addresses/q/<query>', methods=['GET'])
 @app.route('/addresses/q/<query>/page', methods=['GET'])
@@ -446,7 +446,7 @@ def delete_customer_by_id(customer_id):
     if not temp:
         abort(404)
     else:
-        return dao.delete_customer_by_id(customer_id)
+        return get_customers()
 
 
 @app.route('/customers/q/<query>', methods=['GET'])
