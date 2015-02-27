@@ -119,9 +119,9 @@ def del_country_by_id(country_id):
 def update_country(country_id):
     country = dao.find_country_by_id(country_id)
     if not request.json:
-        abort(400)
-    #get all parameters send via curl
-    dictionary = request.json
+        dictionary = request.form
+    else:
+        dictionary = request.json
     #update all parameters that were sent, keep same information if a parameter has not been sent
     country.name = dictionary.get('name', country.name)
     #update on the db
@@ -209,9 +209,9 @@ def delete_city_by_id(city_id):
 def update_city(city_id):
     city = dao.find_city_by_id(city_id)
     if not request.json:
-        abort(400)
-    #get all parameters send via curl
-    dictionary = request.json
+        dictionary = request.form
+    else:
+        dictionary = request.json
     #update all parameters that were sent, keep same information if a parameter has not been sent
     city.name = dictionary.get('name', city.name)
     city.country_id = dictionary.get('country_id', city.country_id)
@@ -311,9 +311,9 @@ def create_address():
 def update_address(address_id):
     address = dao.find_address_by_id(address_id)
     if not request.json:
-        abort(400)
-    #get all parameters sent via curl
-    dictionary = request.json
+        dictionary = request.form
+    else:
+        dictionary = request.json
     #update all parameters that were sent, keep same information if a parameter has not been sent
     address.address1 = dictionary.get('address1', address.address1)
     address.address2 = dictionary.get('address2', address.address2)
@@ -430,9 +430,9 @@ def create_customer():
 def update_customer(customer_id):
     customer = dao.find_customer_by_id(customer_id)
     if not request.json:
-        abort(400)
-    #get all parameters sent via curl
-    dictionary = request.json
+        dictionary = request.form
+    else:
+        dictionary = request.json
     #update all parameters that were sent, keep information same if a parameter has not been sent
     customer.name.first = dictionary.get('first_name', customer.name.first)
     customer.name.last = dictionary.get('last_name', customer.name.last)
