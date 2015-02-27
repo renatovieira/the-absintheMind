@@ -14,4 +14,4 @@ class Country:
 
     @staticmethod
     def field_to_database_column():
-        return {'id': 'CountryID', 'name': 'CountryName'}
+        return {'id': 'CountryID', 'name': 'CountryName', 'CountryID': 'CountryID', 'CountryName': 'CountryName'}

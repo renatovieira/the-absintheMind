@@ -32,7 +32,9 @@ class Customer:
     @staticmethod
     def field_to_database_column():
         return {'id': 'CustomerID', 'store_id': 'StoreID', 'first_name': 'FirstName',
-                'last_name': 'LastName', 'email_id': 'EmailID', 'address_id': 'AddressID', 'active': 'Active'}
+                'last_name': 'LastName', 'email_id': 'EmailID', 'address_id': 'AddressID', 'active': 'Active',
+                'CustomerID': 'CustomerID', 'StoreID': 'StoreID', 'FirstName': 'FirstName',
+                'LastName': 'LastName', 'EmailID': 'EmailID', 'AddressID': 'AddressID', 'Active': 'Active'}
 
 
 class Name:

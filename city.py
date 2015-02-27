@@ -22,4 +22,5 @@ class City:
 
     @staticmethod
     def field_to_database_column():
-        return {'id': 'CityID', 'name': 'CityName', 'country_id': 'CountryID'}
+        return {'id': 'CityID', 'name': 'CityName', 'country_id': 'CountryID',
+                'CityID': 'CityID', 'CityName': 'CityName', 'CountryID': 'CountryID'}

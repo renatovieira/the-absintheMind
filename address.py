@@ -29,4 +29,6 @@ class Address:
     @staticmethod
     def field_to_database_column():
         return {'id': 'AddressID', 'address1': 'Address1', 'address2': 'Address2',
-                'district': 'District', 'postal_code': 'PostalCode', 'city_id': 'CityID', 'country_id': 'CountryID'}
+                'district': 'District', 'postal_code': 'PostalCode', 'city_id': 'CityID', 'country_id': 'CountryID',
+                'AddressID': 'AddressID', 'Address1': 'Address1', 'Address2': 'Address2',
+                'District': 'District', 'PostalCode': 'PostalCode', 'CityID': 'CityID', 'CountryID': 'CountryID'}
