@@ -97,7 +97,7 @@ def create_country():
     elif jf is 'form':
         country = {
             'CountryID': request.form['CountryID'],
-            'CountryName': request.form['CountryName']
+            'CountryName': "'{0}'".format(request.form['CountryName'])
         }
     else:
         abort(400)
@@ -173,7 +173,7 @@ def create_city():
     elif jf is 'form':
         city = {
             'CityID': request.form['CityID'],
-            'CityName': request.form['CityName'],
+            'CityName': "'{0}'".format(request.form['CityName']),
             'CountryID': request.form['CountryID']
         }
     else:
@@ -288,9 +288,9 @@ def create_address():
     elif jf is 'form':
         address = {
             'AddressID' :request.form['AddressID'],
-            'Address1': request.form['Address1'],
-            'Address2':request.form['Address2'],
-            'District':request.form['District'],
+            'Address1': "'{0}'".format(request.form['Address1']),
+            'Address2': "'{0}'".format(request.form['Address2']),
+            'District': "'{0}'".format(request.form['District']),
             'CityID':request.form['CityID'],
             'PostalCode':request.form['PostalCode'],
             'CountryID': request.form['CountryID']
@@ -405,13 +405,13 @@ def create_customer():
         customer = {
             'CustomerID': request.form['CustomerID'],
             'StoreID' : request.form['StoreID'],
-            'FirstName' : request.form['FirstName'],
-            'LastName' : request.form['LastName'],
-            'EmailID' : request.form['EmailID'],
+            'FirstName': "'{0}'".format(request.form['FirstName']),
+            'LastName': "'{0}'".format(request.form['LastName']),
+            'EmailID': "'{0}'".format(request.form['EmailID']),
             'AddressID' : request.form['AddressID'],
-            'Active' : request.form['Active'],
-            'CreateDate' : request.form['CreateDate'],
-            'LastUpdate' : request.form['LastUpdate']
+            'Active': "'{0}'".format(request.form['Active']),
+            'CreateDate': "'{0}'".format(request.form['CreateDate']),
+            'LastUpdate': "'{0}'".format(request.form['LastUpdate'])
         }
     else:
         abort(400)
