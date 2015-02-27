@@ -9,7 +9,7 @@ class Country:
 
     def serialize(self, dao):
         serialize_dict = self.__dict__
-        serialize_dict['link'] = 'http://localhost:5000/countries/q/id={0}'.format(self.id)
+        serialize_dict['link'] = 'http://localhost:5000/countries/{0}'.format(self.id)
         return serialize_dict
 
     @staticmethod

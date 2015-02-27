@@ -16,7 +16,7 @@ class City:
         for key in self.__dict__:
             if key != 'country_id':
                 serialize_dict[key] = self.__dict__[key]
-        serialize_dict['link'] = 'http://localhost:5000/cities/q/id={0}'.format(self.id)
+        serialize_dict['link'] = 'http://localhost:5000/cities/{0}'.format(self.id)
         serialize_dict['country'] = dao.find_country_by_id(self.country_id).serialize(dao)
         return serialize_dict
 

@@ -22,7 +22,7 @@ class Address:
         for key in self.__dict__:
             if key != 'country_id' and key != 'city_id':
                 serialize_dict[key] = self.__dict__[key]
-        serialize_dict['link'] = 'http://localhost:5000/addresses/q/id={0}'.format(self.id)
+        serialize_dict['link'] = 'http://localhost:5000/addresses/{0}'.format(self.id)
         serialize_dict['city'] = dao.find_city_by_id(self.city_id).serialize(dao)
         return serialize_dict
 
