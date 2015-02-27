@@ -378,7 +378,7 @@ def get_customers_by_city(city_id, page_num=1):
     except IndexError:
         abort(404)
 
-@app.route('/customers/<int:customers_id>', methods=['GET'])
+@app.route('/customers/<int:customer_id>', methods=['GET'])
 def find_customer_by_id(customer_id):
     return get_right_format([dao.find_customer_by_id(customer_id)], request, dao)
 
