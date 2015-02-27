@@ -178,7 +178,6 @@ class Dao:
         else:
             self.cursor.execute("INSERT INTO COUNTRY (CountryID, CountryName) VALUES ({0},{1})".format(country.id, country.name))
         self.cursor.connection.commit()
-        return "/countries/{0}".format(country.id)
 
     def create_row_in_city(self,city):
         if city.id is -1:
@@ -190,7 +189,6 @@ class Dao:
             print "INSERT INTO CITY (CityID, CityName, CountryID) VALUES ({0},{1},{2})".format(city.id, city.name, city.country_id)
             self.cursor.execute("INSERT INTO CITY (CityID, CityName, CountryID) VALUES ({0},{1},{2})".format(city.id, city.name, city.country_id))
         self.cursor.connection.commit()
-        return "/cities/{0}".format(city.id)
 
     def create_row_in_address(self,address):
         if address.id is -1:
@@ -205,7 +203,6 @@ class Dao:
                             .format(address.id,address.address1, address.address2, address.district,
                                     address.city_id, address.postal_code, address.country_id))
         self.cursor.connection.commit()
-        return "/addresses/{0}".format(address.id)
 
     #should be updated since we shouldn't be inputting createdate and lastupdate through the web app
     def create_row_in_customer(self,customer):
@@ -217,7 +214,6 @@ class Dao:
         else:
             self.cursor.execute("INSERT INTO CUSTOMER (CustomerID, StoreID, FirstName, LastName, EmailID, AddressID, Active, CreateDate, LastUpdate) VALUES ({0},{1},{2},{3},{4},{5},{6},{7},{8})".format(customer.id,customer.store_id, customer.name.first, customer.name.last, customer.email_id, customer.address_id, customer.active, customer.create_date,customer.last_update))
         self.cursor.connection.commit()
-        return "/customers/{0}".format(customer.id)
 
     #Update methods
     def update_country(self, country):

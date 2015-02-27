@@ -104,7 +104,8 @@ def create_country():
 
     print country
     new_country = Country(country)
-    return dao.create_row_in_country(new_country)
+    dao.create_row_in_country(new_country)
+    return find_country_by_id(new_country.id)
 
 @app.route('/countries/<int:country_id>', methods=['DELETE'])
 def del_country_by_id(country_id):
@@ -181,7 +182,9 @@ def create_city():
 
     print city
     new_city = City(city)
-    return dao.create_row_in_city(new_city)
+    dao.create_row_in_city(new_city)
+    return find_city_by_id(new_city.id)
+
 
 @app.route('/cities/country/<int:country_id>', methods=['GET'])
 @app.route('/cities/country/<int:country_id>/page', methods=['GET'])
@@ -300,7 +303,9 @@ def create_address():
 
     print address
     new_address = Address(address)
-    return dao.create_row_in_address(new_address)
+    dao.create_row_in_address(new_address)
+    return find_address_by_id(new_address.id)
+
 
 @app.route('/addresses/<int:address_id>', methods=['PUT'])
 def update_address(address_id):
@@ -418,7 +423,8 @@ def create_customer():
 
     print customer
     new_customer = Customer(customer)
-    return dao.create_row_in_customer(new_customer)
+    dao.create_row_in_customer(new_customer)
+    return find_customer_by_id(new_customer.id)
 
 @app.route('/customers/<int:customer_id>', methods=['PUT'])
 def update_customer(customer_id):
