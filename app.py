@@ -135,7 +135,7 @@ def update_country(country_id):
 def query_countries(query,page_num=1):
     query_dict = parse_query(query, Country.field_to_database_column())
     countries = dao.query_countries(query_dict)
-    pages = paginate(countries, 2, 'countries/page')
+    pages = paginate(countries, 2, 'countries/q/{0}/page'.format(query))
     try:
         return render_template('basic_page.html', page=pages[page_num-1], result=get_right_format(pages[page_num-1].items, request, dao).get_data())
     except IndexError:
@@ -226,7 +226,7 @@ def update_city(city_id):
 def query_cities(query, page_num=1):
     query_dict = parse_query(query, City.field_to_database_column())
     cities = dao.query_cities(query_dict)
-    pages = paginate(cities, 2, 'cities/page')
+    pages = paginate(cities, 2, 'cities/q/{0}/page'.format(query))
     try:
         return render_template('basic_page.html', page=pages[page_num-1], result=get_right_format(pages[page_num-1].items, request, dao).get_data())
     except IndexError:
@@ -342,7 +342,7 @@ def delete_address_by_id(address_id):
 def query_addresses(query,page_num=1):
     query_dict = parse_query(query, Address.field_to_database_column())
     addresses = dao.query_addresses(query_dict)
-    pages = paginate(addresses, 2, 'addresses/page')
+    pages = paginate(addresses, 2, 'addresses/q/{0}/page'.format(query))
     try:
         return render_template('basic_page.html', page=pages[page_num-1], result=get_right_format(pages[page_num-1].items, request, dao).get_data())
     except IndexError:
@@ -461,7 +461,7 @@ def delete_customer_by_id(customer_id):
 def query_customer(query,page_num=1):
     query_dict = parse_query(query, Customer.field_to_database_column())
     customers = dao.query_customers(query_dict)
-    pages = paginate(customers, 2, 'customers/page')
+    pages = paginate(customers, 2, 'customers/q/{0}/page'.format(query))
     try:
         return render_template('basic_page.html', page=pages[page_num-1], result=get_right_format(pages[page_num-1].items, request, dao).get_data())
     except IndexError:

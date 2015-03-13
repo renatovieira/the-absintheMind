@@ -249,6 +249,11 @@ class Dao:
     def find_x_by_y_dict(self, x, y_dict):
         query = None
         for param in y_dict:
+            #hacky solution
+            try:
+                param[2] = int(param[2])
+            except:
+                param[2] = param[2]
             if param[0] == '&':
                 if query is None:
                     query = "SELECT * FROM {0} WHERE {1}='{2}'".format(x, param[1], param[2])
