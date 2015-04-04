@@ -1,0 +1,27 @@
+############################################################
+The AbsintheMind
+############################################################
+
+Members:
+Philip Park: pwp2106
+Surashee Kulkarni: ssk2197
+Renato Vieira: ran2134
+Ishaan Sayal: is2439
+Preeti Vaidya: pv2259
+
+Project 1: Sakila Customer Model API
+
+
+Installation:
+This is a Python Flask web application that must be run locally. The python dependencies are listed in requirements.txt of this repository. Simply pip install flask, pymysql and dicttoxml.
+
+The application is also dependent on a MySQl database being run concurrently. A file db_config_template is provided, please input the relevant info into that file and rename it as db_config. Doing so allows the application to access the database and it is required for the app to run.
+
+We have provided a CDRSv2.sql file which, like its name suggests, governs the schema of our database. Please import this file by running mysql -u <username> -p database_name < CDRSv2.sql in your terminal. These values <username> and <database_name> are the ones that will be put into db_config.
+
+Running the application:
+After setting up navigate to the project folder. From there run "python app.py". This will start the application at the http://localhost:5000. Now you can browse various urls to query the API. We have provided a shell script that will perform a demonstration of the API. It will perform CRUD, demonstrate pagination, querying and variable content formats. A variety of curl commands are also provided with the repository and you can perform these yourself to do your own manipulations to the
+database.
+
+Thank you
+Team The AbinstheMind
