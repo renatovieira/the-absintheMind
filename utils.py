@@ -46,11 +46,19 @@ def xmlify(objects):
     return Response(dicttoxml(objects), mimetype='application/xml')
 
 
-def get_right_format(objects, request, dao):
+def get_right_format(objects, request, dao, page=None):
+    #pdb.set_trace()
     if request.headers['Content-Type'] == 'application/xml':
         objects = [obj.serialize(dao) for obj in objects]
-        return xmlify(objects)
-    return jsonify(objects=[obj.serialize(dao) for obj in objects])
+        if page:
+            return xmlify(objects+page)
+        else:
+            return xmlify(objects)
+    if page:
+        page = [page.serialize()]
+        return jsonify({'objects':[obj.serialize(dao) for obj in objects]+page})
+    else:
+        return jsonify(objects=[obj.serialize(dao) for obj in objects])
 
 
 def json_or_form(request):
