@@ -10,6 +10,8 @@ from address import Address
 from customer import Customer
 from page_obj import Page
 from utils import *
+from os import environ
+import re
 
 app = Flask(__name__)
 app.config["DEBUG"] = True  # Only include this while you are testing your app
@@ -69,11 +71,17 @@ def create_city_country():
     return dao.create_row_in_city(new_city)
 
 @app.route('/countries', methods=['GET'])
-@app.route('/countries/page', methods=['GET'])
 @app.route('/countries/page/<int:page_num>', methods=['GET'])
 def get_countries(page_num=1):
-    countries = dao.get_countries()
-    pages = paginate(countries, 1, 'countries/page')
+    query = request.query_string
+    if query is None or len(query) == 0:
+        countries = dao.get_countries()
+        pages = paginate(countries, 1, 'countries/page')
+    else:
+        query = query[5:-3]
+        query_dict = parse_query(query, Country.field_to_database_column())
+        countries = dao.query_countries(query_dict)
+        pages = paginate(countries, 1, 'countries/page', '?q="{0}"'.format(query))
     try:
         print pages
         #print get_right_format(countries, request, dao, pages[page_num-1])
@@ -132,26 +140,20 @@ def update_country(country_id):
     #return updated object
     return jsonify({'country': country.serialize(dao)})
 
-@app.route('/countries/q/<query>', methods=['GET'])
-@app.route('/countries/q/<query>/page', methods=['GET'])
-@app.route('/countries/q/<query>/page/<int:page_num>', methods=['GET'])
-def query_countries(query,page_num=1):
-    query_dict = parse_query(query, Country.field_to_database_column())
-    countries = dao.query_countries(query_dict)
-    pages = paginate(countries, 1, 'countries/q/{0}/page'.format(query))
-    try:
-        return get_right_format(pages[page_num-1].items, request, dao, pages[page_num-1])
-    except IndexError:
-        abort(404)
-
 #City
 
 @app.route('/cities', methods=['GET'])
-@app.route('/cities/page', methods=['GET'])
 @app.route('/cities/page/<int:page_num>', methods=['GET'])
 def get_cities(page_num=1):
-    cities = dao.get_cities()
-    pages = paginate(cities, 1, 'cities/page')
+    query = request.query_string
+    if query is None or len(query) == 0:
+        cities = dao.get_cities()
+        pages = paginate(cities, 1, 'cities/page')
+    else:
+        query = query[5:-3]
+        query_dict = parse_query(query, City.field_to_database_column())
+        cities = dao.query_cities(query_dict)
+        pages = paginate(cities, 1, 'cities/page', '?q="{0}"'.format(query))
     try:
         return get_right_format(pages[page_num-1].items, request, dao, pages[page_num-1])
         #return render_template('basic_page.html', page=pages[page_num-1], result=get_right_format(pages[page_num-1].items, request, dao).get_data())
@@ -225,27 +227,20 @@ def update_city(city_id):
     #return updated object
     return jsonify({'city': city.serialize(dao)})
 
-@app.route('/cities/q/<query>', methods=['GET'])
-@app.route('/cities/q/<query>/page', methods=['GET'])
-@app.route('/cities/q/<query>/page/<int:page_num>', methods=['GET'])
-def query_cities(query, page_num=1):
-    query_dict = parse_query(query, City.field_to_database_column())
-    cities = dao.query_cities(query_dict)
-    pages = paginate(cities, 1, 'cities/q/{0}/page'.format(query))
-    try:
-        #return render_template('basic_page.html', page=pages[page_num-1], result=get_right_format(pages[page_num-1].items, request, dao).get_data())
-        return get_right_format(pages[page_num-1].items, request, dao, pages[page_num-1])
-    except IndexError:
-        abort(404)
-
 #Address
 
 @app.route('/addresses', methods=['GET'])
-@app.route('/addresses/page', methods=['GET'])
 @app.route('/addresses/page/<int:page_num>', methods=['GET'])
 def get_addresses(page_num=1):
-    addresses = dao.get_addresses()
-    pages = paginate(addresses, 1, 'addresses/page')
+    query = request.query_string
+    if query is None or len(query) == 0:
+        addresses = dao.get_addresses()
+        pages = paginate(addresses, 1, 'addresses/page')
+    else:
+        query = query[5:-3]
+        query_dict = parse_query(query, Address.field_to_database_column())
+        addresses = dao.query_addresses(query_dict)
+        pages = paginate(addresses, 1, 'addresses/page', '?q="{0}"'.format(query))
     try:
 #        return render_template('basic_page.html', page=pages[page_num-1], result=get_right_format(pages[page_num-1].items, request, dao).get_data())
         return get_right_format(pages[page_num-1].items, request, dao, pages[page_num-1])
@@ -345,27 +340,20 @@ def delete_address_by_id(address_id):
     else:
         return get_addresses()
 
-@app.route('/addresses/q/<query>', methods=['GET'])
-@app.route('/addresses/q/<query>/page', methods=['GET'])
-@app.route('/addresses/q/<query>/page/<int:page_num>', methods=['GET'])
-def query_addresses(query,page_num=1):
-    query_dict = parse_query(query, Address.field_to_database_column())
-    addresses = dao.query_addresses(query_dict)
-    pages = paginate(addresses, 1, 'addresses/q/{0}/page'.format(query))
-    try:
-#        return render_template('basic_page.html', page=pages[page_num-1], result=get_right_format(pages[page_num-1].items, request, dao).get_data())
-        return get_right_format(pages[page_num-1].items, request, dao, pages[page_num-1])
-    except IndexError:
-        abort(404)
-
 #Customer
 
 @app.route('/customers', methods=['GET'])
-@app.route('/customers/page', methods=['GET'])
 @app.route('/customers/page/<int:page_num>', methods=['GET'])
 def get_customers(page_num=1):
-    customers = dao.get_customers()
-    pages = paginate(customers, 1, 'customers/page')
+    query = request.query_string
+    if query is None or len(query) == 0:
+        customers = dao.get_customers()
+        pages = paginate(customers, 1, 'customers/page')
+    else:
+        query = query[5:-3]
+        query_dict = parse_query(query, Customer.field_to_database_column())
+        customers = dao.query_customers(query_dict)
+        pages = paginate(customers, 1, 'customers/page', '?q="{0}"'.format(query))
     try:
 #        return render_template('basic_page.html', page=pages[page_num-1], result=get_right_format(pages[page_num-1].items, request, dao).get_data())
         return get_right_format(pages[page_num-1].items, request, dao, pages[page_num-1])
@@ -467,19 +455,6 @@ def delete_customer_by_id(customer_id):
     else:
         return get_customers()
 
-
-@app.route('/customers/q/<query>', methods=['GET'])
-@app.route('/customers/q/<query>/page', methods=['GET'])
-@app.route('/customers/q/<query>/page/<int:page_num>', methods=['GET'])
-def query_customer(query,page_num=1):
-    query_dict = parse_query(query, Customer.field_to_database_column())
-    customers = dao.query_customers(query_dict)
-    pages = paginate(customers, 1, 'customers/q/{0}/page'.format(query))
-    try:
-        #return render_template('basic_page.html', page=pages[page_num-1], result=get_right_format(pages[page_num-1].items, request, dao).get_data())
-        return get_right_format(pages[page_num-1].items, request, dao, pages[page_num-1])
-    except IndexError:
-        abort(404)
-
 if __name__ == "__main__":
-    app.run(host="0.0.0.0")
+    port = int(environ.get('PORT', 5000))
+    app.run(host="0.0.0.0", port=port, processes=2)
