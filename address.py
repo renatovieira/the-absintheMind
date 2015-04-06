@@ -1,9 +1,7 @@
-from conf import *
+from conf import url
 
 
 class Address:
-    url = read_url()
-
     def __init__(self, id, address1, address2, district, postal_code, city_id, country_id, last_update=None):
         self.id = id
         self.address1 = address1
@@ -27,7 +25,7 @@ class Address:
         for key in self.__dict__:
             if key != 'country_id' and key != 'city_id':
                 serialize_dict[key] = self.__dict__[key]
-        serialize_dict['link'] = '{0}/addresses/{1}'.format(Address.url, self.id)
+        serialize_dict['link'] = '{0}/addresses/{1}'.format(url, self.id)
         serialize_dict['city'] = dao.find_city_by_id(self.city_id).serialize(dao)
         return serialize_dict
 

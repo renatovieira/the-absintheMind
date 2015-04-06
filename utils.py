@@ -2,6 +2,8 @@ from dicttoxml import dicttoxml
 import pdb
 from flask import Response, jsonify, request
 from page_obj import Page
+from conf import url
+
 
 def parse_query(query, class_dictionary):
     return get_dict(query, class_dictionary, None)
@@ -41,7 +43,6 @@ def get_dict(query, class_dictionary, query_type):
     return query_list
 
 
-
 def xmlify(objects):
     return Response(dicttoxml(objects), mimetype='application/xml')
 
@@ -69,6 +70,7 @@ def json_or_form(request):
     else:
         return None
 
+
 def paginate(items, per_page, page_url):
     i = 0
     page_num = 1
@@ -77,7 +79,7 @@ def paginate(items, per_page, page_url):
         temp_page = Page(items[i:i+per_page])
         # if we're not on the first page there has to be a previous page link
         if page_num > 1:
-            temp_page.prev_page = "http://127.0.0.1:5000/{0}/{1}".format(page_url,page_num-1)
+            temp_page.prev_page = "{0}/{1}/{2}".format(url, page_url, page_num-1)
 
         # increase the page number
         page_num += 1
@@ -85,7 +87,7 @@ def paginate(items, per_page, page_url):
         # don't add a next page if we are at the end of the list
         try:
             items[i]
-            temp_page.next_page = "http://127.0.0.1:5000/{0}/{1}".format(page_url,page_num)
+            temp_page.next_page = "{0}/{1}/{2}".format(url, page_url, page_num)
             pages.append(temp_page)
         except IndexError:
             pages.append(temp_page)

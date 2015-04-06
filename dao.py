@@ -13,7 +13,6 @@ class Dao:
 
     def conn_db(self):
         host, user, password, database = read_db_conf()
-
         conn = pymysql.connect(host=host, user=user, passwd=password, db=database)
         return conn.cursor(pymysql.cursors.DictCursor)
 
@@ -23,6 +22,8 @@ class Dao:
 
     #Get methods
     def get_x(self, x):
+        self.cursor.close()
+        self.cursor = self.conn_db()
         self.cursor.execute("SELECT * FROM {0}".format(x))
 
     def get_countries(self):
@@ -135,7 +136,8 @@ class Dao:
         return customers
 
     def find_x_by_y(self, x, y, y_val):
-        print "SELECT * FROM {0} WHERE {1}={2}".format(x,y,y_val)
+        self.cursor.close()
+        self.cursor = self.conn_db()
         self.cursor.execute("SELECT * FROM {0} WHERE {1}={2}".format(x,y,y_val))
 
     #Delete method
@@ -152,6 +154,8 @@ class Dao:
         return self.delete_x_by_y('CUSTOMER', 'CustomerID', customer_id)
 
     def delete_x_by_y(self, x, y, y_val):
+        self.cursor.close()
+        self.cursor = self.conn_db()
         #try:
         self.cursor.execute("SELECT * FROM {0} WHERE {1}={2}".format(x,y,y_val))
         temp = self.cursor.fetchone()
@@ -170,6 +174,8 @@ class Dao:
     #Create methods
 
     def create_row_in_country(self,country):
+        self.cursor.close()
+        self.cursor = self.conn_db()
         #print "INSERT INTO COUNTRY (CountryID, CountryName) VALUES ({0},{1})".format(country.id, country.name)
         if country.id is -1:
             print "auto incre country"
@@ -180,6 +186,8 @@ class Dao:
         self.cursor.connection.commit()
 
     def create_row_in_city(self,city):
+        self.cursor.close()
+        self.cursor = self.conn_db()
         if city.id is -1:
             print "auto incre city"
             self.cursor.execute("INSERT INTO CITY (CityName, CountryID) VALUES ({0},{1})".format(city.name, city.country_id))
@@ -191,6 +199,8 @@ class Dao:
         self.cursor.connection.commit()
 
     def create_row_in_address(self,address):
+        self.cursor.close()
+        self.cursor = self.conn_db()
         if address.id is -1:
             self.cursor.execute("INSERT INTO ADDRESS (Address1, Address2, District, CityID, PostalCode, CountryID)"
                             " VALUES ({0},{1},{2},{3},{4},{5})"
@@ -206,6 +216,8 @@ class Dao:
 
     #should be updated since we shouldn't be inputting createdate and lastupdate through the web app
     def create_row_in_customer(self,customer):
+        self.cursor.close()
+        self.cursor = self.conn_db()
         if customer.id is -1:
             self.cursor.execute("INSERT INTO CUSTOMER (StoreID, FirstName, LastName, EmailID, AddressID, Active, CreateDate, LastUpdate) VALUES ({0},{1},{2},{3},{4},{5},{6},{7})".format(customer.store_id, customer.name.first, customer.name.last, customer.email_id, customer.address_id, customer.active, customer.create_date,customer.last_update))
             self.cursor.execute("SELECT CustomerID FROM CUSTOMER WHERE FirstName={0} AND LastName={1}".format(customer.name.first, customer.name.last))
@@ -217,22 +229,24 @@ class Dao:
 
     #Update methods
     def update_country(self, country):
+        self.cursor.close()
+        self.cursor = self.conn_db()
         self.cursor.execute("UPDATE COUNTRY SET CountryName='{0}' WHERE CountryID={1}".format(country.name, country.id))
 
     def update_city(self, city):
+        self.cursor.close()
+        self.cursor = self.conn_db()
         self.cursor.execute("UPDATE CITY SET CityName='{0}', CountryID={1} WHERE CityID={2}".format(city.name, city.country_id, city.id))
 
     def update_address(self, address):
+        self.cursor.close()
+        self.cursor = self.conn_db()
         self.cursor.execute("UPDATE ADDRESS SET Address1='{0}', Address2='{1}', District='{2}', PostalCode={3}, CityID={4},"
                             " CountryID={5} WHERE AddressID={6}".format(address.Address1, address.Address2, address.District,
                                                                         address.PostalCode, address.CityID, address.CountryID, address.id))
-
-    @staticmethod
-    def field_to_database_column():
-        return {'id': 'CustomerID', 'store_id': 'StoreID', 'first_name': 'FirstName',
-                'last_name': 'LastName', 'email_id': 'EmailID', 'address_id': 'AddressID', 'active': 'Active'}
-
     def update_customer(self, customer):
+        self.cursor.close()
+        self.cursor = self.conn_db()
         self.cursor.execute("UPDATE CUSTOMER SET FirstName='{0}', LastName='{1}', EmailID='{2}', "
                             "StoreID={3}, AddressID={4}, Active={5}, CreateDate='{6}' "
                             "WHERE CustomerID={7}".format(customer.name.first, customer.name.last, customer.email_id,
@@ -242,6 +256,8 @@ class Dao:
 
     #Query methods
     def find_id_by_y(self, x, table, column, y):
+        self.cursor.close()
+        self.cursor = self.conn_db()
         self.cursor.execute("SELECT {0} FROM {1} WHERE {2}={3}".format(x,table,column,y))
         result = self.cursor.fetchone()
         return result[x]
@@ -272,6 +288,8 @@ class Dao:
                 query = query + " OFFSET {0}".format(param[2])
 
         print query
+        self.cursor.close()
+        self.cursor = self.conn_db()
         self.cursor.execute(query)
 
     def query_countries(self, query_dict):

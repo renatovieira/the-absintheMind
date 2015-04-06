@@ -13,3 +13,5 @@ def read_url():
     data = json.load(json_data)
     json_data.close()
     return data.get('url', "http://localhost:5000")
+
+url = read_url()
