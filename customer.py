@@ -1,4 +1,9 @@
+from conf import *
+
+
 class Customer:
+    url = read_url()
+
     def __init__(self, id, stored_id, first_name, last_name, email_id, address_id, active, create_date, last_update=None):
         self.id = id
         self.store_id = stored_id
@@ -25,7 +30,7 @@ class Customer:
         for key in self.__dict__:
             if key != 'address_id':
                 serialize_dict[key] = self.__dict__[key]
-        serialize_dict['link'] = 'http://localhost:5000/customers/{0}'.format(self.id)
+        serialize_dict['link'] = '{0}/customers/{1}'.format(Customer.url, self.id)
         serialize_dict['address'] = dao.find_address_by_id(self.address_id).serialize(dao)
         return serialize_dict
 

@@ -1,4 +1,9 @@
+from conf import *
+
+
 class Country:
+    url = read_url()
+
     def __init__(self, id, name, last_update=None):
         self.id = id
         self.name = name
@@ -9,7 +14,7 @@ class Country:
 
     def serialize(self, dao):
         serialize_dict = self.__dict__
-        serialize_dict['link'] = 'http://localhost:5000/countries/{0}'.format(self.id)
+        serialize_dict['link'] = '{0}/countries/{1}'.format(Country.url, self.id)
         return serialize_dict
 
     @staticmethod
