@@ -48,7 +48,7 @@ def xmlify(objects):
 
 def get_right_format(objects, request, dao, page=None):
     #pdb.set_trace()
-    if request.headers['Content-Type'] == 'application/xml':
+    if request.headers.get('Content-Type', '') == 'application/xml':
         objects = [obj.serialize(dao) for obj in objects]
         if page:
             return xmlify(objects+page)
