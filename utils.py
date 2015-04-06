@@ -71,7 +71,7 @@ def json_or_form(request):
         return None
 
 
-def paginate(items, per_page, page_url):
+def paginate(items, per_page, page_url, query=""):
     i = 0
     page_num = 1
     pages = []
@@ -79,7 +79,7 @@ def paginate(items, per_page, page_url):
         temp_page = Page(items[i:i+per_page])
         # if we're not on the first page there has to be a previous page link
         if page_num > 1:
-            temp_page.prev_page = "{0}/{1}/{2}".format(url, page_url, page_num-1)
+            temp_page.prev_page = "{0}/{1}/{2}{3}".format(url, page_url, page_num-1, query)
 
         # increase the page number
         page_num += 1
@@ -87,7 +87,7 @@ def paginate(items, per_page, page_url):
         # don't add a next page if we are at the end of the list
         try:
             items[i]
-            temp_page.next_page = "{0}/{1}/{2}".format(url, page_url, page_num)
+            temp_page.next_page = "{0}/{1}/{2}{3}".format(url, page_url, page_num, query)
             pages.append(temp_page)
         except IndexError:
             pages.append(temp_page)
