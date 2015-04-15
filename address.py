@@ -23,10 +23,14 @@ class Address:
     def serialize(self, dao):
         serialize_dict = {}
         for key in self.__dict__:
-            if key != 'country_id' and key != 'city_id':
+            if self.__dict__[key] is not None:
                 serialize_dict[key] = self.__dict__[key]
-        serialize_dict['link'] = '{0}/addresses/{1}'.format(url, self.id)
-        serialize_dict['city'] = dao.find_city_by_id(self.city_id).serialize(dao)
+
+        if self.city_id is not None:
+            serialize_dict['city'] = dao.find_city_by_id(self.city_id).serialize(dao)
+
+        if self.id is not None:
+            serialize_dict['link'] = '{0}/addresses/{1}'.format(url, self.id)
         return serialize_dict
 
     @staticmethod

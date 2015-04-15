@@ -15,10 +15,14 @@ class City:
     def serialize(self, dao):
         serialize_dict = {}
         for key in self.__dict__:
-            if key != 'country_id':
+            if self.__dict__[key] is not None:
                 serialize_dict[key] = self.__dict__[key]
-        serialize_dict['link'] = '{0}/cities/{1}'.format(url, self.id)
-        serialize_dict['country'] = dao.find_country_by_id(self.country_id).serialize(dao)
+
+        if self.country_id is not None:
+            serialize_dict['country'] = dao.find_country_by_id(self.country_id).serialize(dao)
+
+        if self.id is not None:
+            serialize_dict['link'] = '{0}/cities/{1}'.format(url, self.id)
         return serialize_dict
 
     @staticmethod

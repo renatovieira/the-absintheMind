@@ -26,10 +26,14 @@ class Customer:
         self.name = self.name.serialize()
         serialize_dict = {}
         for key in self.__dict__:
-            if key != 'address_id':
+            if self.__dict__[key] is not None:
                 serialize_dict[key] = self.__dict__[key]
-        serialize_dict['link'] = '{0}/customers/{1}'.format(url, self.id)
-        serialize_dict['address'] = dao.find_address_by_id(self.address_id).serialize(dao)
+
+        if self.address_id is not None:
+            serialize_dict['address'] = dao.find_address_by_id(self.address_id).serialize(dao)
+
+        if self.id is not None:
+            serialize_dict['link'] = '{0}/customers/{1}'.format(url, self.id)
         return serialize_dict
 
     @staticmethod

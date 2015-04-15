@@ -66,32 +66,32 @@ class Dao:
         country = Country(result)
         return country
 
-    def find_country_by_id(self, country_id):
-        self.find_x_by_y('COUNTRY', 'CountryID', country_id)
+    def find_country_by_id(self, country_id, fields=None):
+        self.find_x_by_y('COUNTRY', 'CountryID', country_id, fields)
         result = self.cursor.fetchone()
         if result is None:
             return "No countries found"
         country = Country(result)
         return country
 
-    def find_city_by_id(self, city_id):
-        self.find_x_by_y('CITY', 'CityID', city_id)
+    def find_city_by_id(self, city_id, fields=None):
+        self.find_x_by_y('CITY', 'CityID', city_id, fields)
         result = self.cursor.fetchone()
         if result is None:
             return "No cities found"
         city = City(result)
         return city
 
-    def find_address_by_id(self, address_id):
-        self.find_x_by_y('ADDRESS', 'AddressID', address_id)
+    def find_address_by_id(self, address_id, fields=None):
+        self.find_x_by_y('ADDRESS', 'AddressID', address_id, fields)
         result = self.cursor.fetchone()
         if result is None:
             return "No addresses found"
         address = Address(result)
         return address
 
-    def find_customer_by_id(self, customer_id):
-        self.find_x_by_y('CUSTOMER', 'CustomerID', customer_id)
+    def find_customer_by_id(self, customer_id, fields=None):
+        self.find_x_by_y('CUSTOMER', 'CustomerID', customer_id, fields)
         result = self.cursor.fetchone()
         if result == None:
             return "No such customer"
@@ -135,10 +135,13 @@ class Dao:
             customers.append(Customer(row))
         return customers
 
-    def find_x_by_y(self, x, y, y_val):
+    def find_x_by_y(self, x, y, y_val, fields=None):
         self.cursor.close()
         self.cursor = self.conn_db()
-        self.cursor.execute("SELECT * FROM {0} WHERE {1}={2}".format(x,y,y_val))
+        if fields is None:
+            self.cursor.execute("SELECT * FROM {0} WHERE {1}={2}".format(x,y,y_val))
+        else:
+            self.cursor.execute("SELECT {0} FROM {1} WHERE {2}={3}".format(fields,x,y,y_val))
 
     #Delete method
     def delete_country_by_id(self, country_id):

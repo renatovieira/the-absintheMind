@@ -11,8 +11,13 @@ class Country:
         self.name = dict.get('CountryName')
 
     def serialize(self, dao):
-        serialize_dict = self.__dict__
-        serialize_dict['link'] = '{0}/countries/{1}'.format(url, self.id)
+        serialize_dict = {}
+        for key in self.__dict__:
+            if self.__dict__[key] is not None:
+                serialize_dict[key] = self.__dict__[key]
+
+        if 'CountryID' in serialize_dict:
+            serialize_dict['link'] = '{0}/countries/{1}'.format(url, self.id)
         return serialize_dict
 
     @staticmethod
