@@ -72,16 +72,18 @@ def create_city_country():
 
 @app.route('/countries', methods=['GET'])
 @app.route('/countries/page/<int:page_num>', methods=['GET'])
-def get_countries(page_num=1):
+@app.route('/countries&fields="<string:fields>"', methods=['GET'])
+@app.route('/countries/page/<int:page_num>&fields="<string:fields>"', methods=['GET'])
+def get_countries(page_num=1, fields=None):
     query = request.query_string
     if query is None or len(query) == 0:
-        countries = dao.get_countries()
-        pages = paginate(countries, 1, 'countries/page')
+        countries = dao.get_countries(fields)
+        pages = paginate(countries, 3, 'countries/page')
     else:
         query = query[5:-3]
         query_dict = parse_query(query, Country.field_to_database_column())
-        countries = dao.query_countries(query_dict)
-        pages = paginate(countries, 1, 'countries/page', '?q="{0}"'.format(query))
+        countries = dao.query_countries(query_dict, fields)
+        pages = paginate(countries, 3, 'countries/page', '?q="{0}"'.format(query))
     try:
         print pages
         #print get_right_format(countries, request, dao, pages[page_num-1])
@@ -142,19 +144,20 @@ def update_country(country_id):
     return jsonify({'country': country.serialize(dao)})
 
 #City
-
 @app.route('/cities', methods=['GET'])
 @app.route('/cities/page/<int:page_num>', methods=['GET'])
-def get_cities(page_num=1):
+@app.route('/cities&fields="<string:fields>"', methods=['GET'])
+@app.route('/cities/page/<int:page_num>&fields="<string:fields>"', methods=['GET'])
+def get_cities(page_num=1, fields=None):
     query = request.query_string
     if query is None or len(query) == 0:
-        cities = dao.get_cities()
-        pages = paginate(cities, 1, 'cities/page')
+        cities = dao.get_cities(fields)
+        pages = paginate(cities, 3, 'cities/page')
     else:
         query = query[5:-3]
         query_dict = parse_query(query, City.field_to_database_column())
-        cities = dao.query_cities(query_dict)
-        pages = paginate(cities, 1, 'cities/page', '?q="{0}"'.format(query))
+        cities = dao.query_cities(query_dict, fields)
+        pages = paginate(cities, 3, 'cities/page', '?q="{0}"'.format(query))
     try:
         return get_right_format(pages[page_num-1].items, request, dao, pages[page_num-1])
         #return render_template('basic_page.html', page=pages[page_num-1], result=get_right_format(pages[page_num-1].items, request, dao).get_data())
@@ -230,19 +233,20 @@ def update_city(city_id):
     return jsonify({'city': city.serialize(dao)})
 
 #Address
-
 @app.route('/addresses', methods=['GET'])
 @app.route('/addresses/page/<int:page_num>', methods=['GET'])
-def get_addresses(page_num=1):
+@app.route('/addresses&fields="<string:fields>"', methods=['GET'])
+@app.route('/addresses/page/<int:page_num>&fields="<string:fields>"', methods=['GET'])
+def get_addresses(page_num=1, fields=None):
     query = request.query_string
     if query is None or len(query) == 0:
-        addresses = dao.get_addresses()
-        pages = paginate(addresses, 1, 'addresses/page')
+        addresses = dao.get_addresses(fields)
+        pages = paginate(addresses, 3, 'addresses/page')
     else:
         query = query[5:-3]
         query_dict = parse_query(query, Address.field_to_database_column())
-        addresses = dao.query_addresses(query_dict)
-        pages = paginate(addresses, 1, 'addresses/page', '?q="{0}"'.format(query))
+        addresses = dao.query_addresses(query_dict, fields)
+        pages = paginate(addresses, 3, 'addresses/page', '?q="{0}"'.format(query))
     try:
 #        return render_template('basic_page.html', page=pages[page_num-1], result=get_right_format(pages[page_num-1].items, request, dao).get_data())
         return get_right_format(pages[page_num-1].items, request, dao, pages[page_num-1])
@@ -344,19 +348,20 @@ def delete_address_by_id(address_id):
         return get_addresses()
 
 #Customer
-
 @app.route('/customers', methods=['GET'])
 @app.route('/customers/page/<int:page_num>', methods=['GET'])
-def get_customers(page_num=1):
+@app.route('/customers&fields="<string:fields>"', methods=['GET'])
+@app.route('/customers/page/<int:page_num>&fields="<string:fields>"', methods=['GET'])
+def get_customers(page_num=1, fields=None):
     query = request.query_string
     if query is None or len(query) == 0:
-        customers = dao.get_customers()
-        pages = paginate(customers, 1, 'customers/page')
+        customers = dao.get_customers(fields)
+        pages = paginate(customers, 3, 'customers/page')
     else:
         query = query[5:-3]
         query_dict = parse_query(query, Customer.field_to_database_column())
-        customers = dao.query_customers(query_dict)
-        pages = paginate(customers, 1, 'customers/page', '?q="{0}"'.format(query))
+        customers = dao.query_customers(query_dict, fields)
+        pages = paginate(customers, 3, 'customers/page', '?q="{0}"'.format(query))
     try:
 #        return render_template('basic_page.html', page=pages[page_num-1], result=get_right_format(pages[page_num-1].items, request, dao).get_data())
         return get_right_format(pages[page_num-1].items, request, dao, pages[page_num-1])

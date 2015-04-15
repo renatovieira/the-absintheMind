@@ -21,36 +21,39 @@ class Dao:
         self.cursor.close()
 
     #Get methods
-    def get_x(self, x):
+    def get_x(self, x, fields=None):
         self.cursor.close()
         self.cursor = self.conn_db()
-        self.cursor.execute("SELECT * FROM {0}".format(x))
+        if fields is None:
+            self.cursor.execute("SELECT * FROM {0}".format(x))
+        else:
+            self.cursor.execute("SELECT {0} FROM {1}".format(fields, x))
 
-    def get_countries(self):
-        self.get_x('COUNTRY')
+    def get_countries(self, fields=None):
+        self.get_x('COUNTRY', fields)
         countries = []
         for row in self.cursor:
             countries.append(Country(row))
         return countries
 
-    def get_cities(self):
-        self.get_x('CITY')
+    def get_cities(self, fields=None):
+        self.get_x('CITY', fields)
         cities = []
         for row in self.cursor:
             city = City(row)
             cities.append(city)
         return cities
 
-    def get_addresses(self):
-        self.get_x('ADDRESS')
+    def get_addresses(self, fields=None):
+        self.get_x('ADDRESS', fields)
         addresses = []
         for row in self.cursor:
             address = Address(row)
             addresses.append(address)
         return addresses
 
-    def get_customers(self):
-        self.get_x('CUSTOMER')
+    def get_customers(self, fields=None):
+        self.get_x('CUSTOMER', fields)
         customers = []
         for row in self.cursor:
             customers.append(Customer(row))
@@ -265,7 +268,7 @@ class Dao:
         result = self.cursor.fetchone()
         return result[x]
 
-    def find_x_by_y_dict(self, x, y_dict):
+    def find_x_by_y_dict(self, x, y_dict, fields=None):
         query = None
         for param in y_dict:
             #hacky solution
@@ -274,18 +277,24 @@ class Dao:
             except:
                 param[2] = param[2]
             if param[0] == '&':
-                if query is None:
+                if query is None and fields is None:
                     query = "SELECT * FROM {0} WHERE {1}='{2}'".format(x, param[1], param[2])
+                elif query is None:
+                    query = "SELECT {0} FROM {1} WHERE {2}='{3}'".format(fields, x, param[1], param[2])
                 else:
                     query = query + " AND {0}='{1}'".format(param[1], param[2])
             elif param[0] == '|':
-                if query is None:
+                if query is None and fields is None:
                     query = "SELECT * FROM {0} WHERE {1}='{2}'".format(x, param[1], param[2])
+                elif query is None:
+                    query = "SELECT {0} FROM {1} WHERE {2}='{3}'".format(fields, x, param[1], param[2])
                 else:
                     query = query + " OR {0}='{1}'".format(param[1], param[2])
             elif param[1] == 'LIMIT':
-                if query is None:
+                if query is None and fields is None:
                     query = "SELECT * FROM {0}".format(x)
+                elif query is None:
+                    query = "SELECT {0} FROM {1}".format(fields, x)
                 query = query + " LIMIT {0}".format(param[2])
             elif param[1] == 'OFFSET':
                 query = query + " OFFSET {0}".format(param[2])
@@ -295,29 +304,29 @@ class Dao:
         self.cursor = self.conn_db()
         self.cursor.execute(query)
 
-    def query_countries(self, query_dict):
-        self.find_x_by_y_dict('COUNTRY', query_dict)
+    def query_countries(self, query_dict, fields=None):
+        self.find_x_by_y_dict('COUNTRY', query_dict, fields)
         countries = []
         for row in self.cursor:
             countries.append(Country(row))
         return countries
 
-    def query_cities(self, query_dict):
-        self.find_x_by_y_dict('CITY', query_dict)
+    def query_cities(self, query_dict, fields=None):
+        self.find_x_by_y_dict('CITY', query_dict, fields)
         cities = []
         for row in self.cursor:
             cities.append(City(row))
         return cities
 
-    def query_addresses(self, query_dict):
-        self.find_x_by_y_dict('ADDRESS', query_dict)
+    def query_addresses(self, query_dict, fields=None):
+        self.find_x_by_y_dict('ADDRESS', query_dict, fields)
         addresses = []
         for row in self.cursor:
             addresses.append(Address(row))
         return addresses
 
-    def query_customers(self, query_dict):
-        self.find_x_by_y_dict('CUSTOMER', query_dict)
+    def query_customers(self, query_dict, fields=None):
+        self.find_x_by_y_dict('CUSTOMER', query_dict, fields)
         customers = []
         for row in self.cursor:
             customers.append(Customer(row))
