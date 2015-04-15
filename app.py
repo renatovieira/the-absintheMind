@@ -91,11 +91,8 @@ def get_countries(page_num=1):
         abort(404)
 
 @app.route('/countries/<int:country_id>', methods=['GET'])
-def find_country_by_id(country_id):
-    return get_right_format([dao.find_country_by_id(country_id)], request, dao)
-
 @app.route('/countries/<int:country_id>&fields="<string:fields>"', methods=['GET'])
-def find_country_by_id_projection(country_id, fields):
+def find_country_by_id_projection(country_id, fields=None):
     return get_right_format([dao.find_country_by_id(country_id, fields)], request, dao)
 
 @app.route('/countries', methods=['POST'])
@@ -120,7 +117,7 @@ def create_country():
     print country
     new_country = Country(country)
     dao.create_row_in_country(new_country)
-    return find_country_by_id(new_country.id)
+    return dao.find_country_by_id(new_country.id)
 
 @app.route('/countries/<int:country_id>', methods=['DELETE'])
 def del_country_by_id(country_id):
@@ -165,11 +162,8 @@ def get_cities(page_num=1):
         abort(404)
 
 @app.route('/cities/<int:city_id>', methods=['GET'])
-def find_city_by_id(city_id):
-    return get_right_format([dao.find_city_by_id(city_id)], request, dao)
-
 @app.route('/cities/<int:city_id>&fields="<string:fields>"', methods=['GET'])
-def find_city_by_id_projection(city_id, fields):
+def find_city_by_id(city_id, fields=None):
     return get_right_format([dao.find_city_by_id(city_id, fields)], request, dao)
 
 @app.route('/cities', methods=['POST'])
@@ -280,11 +274,8 @@ def get_addresses_by_city(city_id, page_num=1):
         abort(404)
 
 @app.route('/addresses/<int:address_id>', methods=['GET'])
-def find_address_by_id(address_id):
-    return get_right_format([dao.find_address_by_id(address_id)], request, dao)
-
 @app.route('/addresses/<int:address_id>&fields="<string:fields>"', methods=['GET'])
-def find_address_by_id_projection(address_id, fields):
+def find_address_by_id_projection(address_id, fields=None):
     return get_right_format([dao.find_address_by_id(address_id, fields)], request, dao)
 
 @app.route('/addresses', methods=['POST'])
@@ -320,7 +311,7 @@ def create_address():
     print address
     new_address = Address(address)
     dao.create_row_in_address(new_address)
-    return find_address_by_id(new_address.id)
+    return dao.find_address_by_id(new_address.id)
 
 
 @app.route('/addresses/<int:address_id>', methods=['PUT'])
@@ -397,11 +388,8 @@ def get_customers_by_city(city_id, page_num=1):
         abort(404)
 
 @app.route('/customers/<int:customer_id>', methods=['GET'])
-def find_customer_by_id(customer_id):
-    return get_right_format([dao.find_customer_by_id(customer_id)], request, dao)
-
 @app.route('/customers/<int:customer_id>&fields="<string:fields>"', methods=['GET'])
-def find_customer_by_id_projection(customer_id, fields):
+def find_customer_by_id_projection(customer_id, fields=None):
     return get_right_format([dao.find_customer_by_id(customer_id, fields)], request, dao)
 
 @app.route('/customers', methods=['POST'])
@@ -441,7 +429,7 @@ def create_customer():
     print customer
     new_customer = Customer(customer)
     dao.create_row_in_customer(new_customer)
-    return find_customer_by_id(new_customer.id)
+    return dao.find_customer_by_id(new_customer.id)
 
 @app.route('/customers/<int:customer_id>', methods=['PUT'])
 def update_customer(customer_id):
