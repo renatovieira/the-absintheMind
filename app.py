@@ -80,7 +80,6 @@ def get_countries(page_num=1, fields=None):
         countries = dao.get_countries(fields)
         pages = paginate(countries, 3, 'countries/page')
     else:
-        query = query[5:-3]
         query_dict = parse_query(query, Country.field_to_database_column())
         countries = dao.query_countries(query_dict, fields)
         pages = paginate(countries, 3, 'countries/page', '?q="{0}"'.format(query))
@@ -154,7 +153,6 @@ def get_cities(page_num=1, fields=None):
         cities = dao.get_cities(fields)
         pages = paginate(cities, 3, 'cities/page')
     else:
-        query = query[5:-3]
         query_dict = parse_query(query, City.field_to_database_column())
         cities = dao.query_cities(query_dict, fields)
         pages = paginate(cities, 3, 'cities/page', '?q="{0}"'.format(query))
@@ -243,7 +241,6 @@ def get_addresses(page_num=1, fields=None):
         addresses = dao.get_addresses(fields)
         pages = paginate(addresses, 3, 'addresses/page')
     else:
-        query = query[5:-3]
         query_dict = parse_query(query, Address.field_to_database_column())
         addresses = dao.query_addresses(query_dict, fields)
         pages = paginate(addresses, 3, 'addresses/page', '?q="{0}"'.format(query))
@@ -358,7 +355,6 @@ def get_customers(page_num=1, fields=None):
         customers = dao.get_customers(fields)
         pages = paginate(customers, 3, 'customers/page')
     else:
-        query = query[5:-3]
         query_dict = parse_query(query, Customer.field_to_database_column())
         customers = dao.query_customers(query_dict, fields)
         pages = paginate(customers, 3, 'customers/page', '?q="{0}"'.format(query))

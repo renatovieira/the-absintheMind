@@ -5,8 +5,15 @@ from page_obj import Page
 from conf import url
 
 
-def parse_query(query, class_dictionary):
-    return get_dict(query, class_dictionary, None)
+def parse_query(raw_query, class_dictionary):
+    print raw_query
+
+    query = raw_query.replace('\\', '')
+    query = query.replace('"', '')
+    query = query.replace("%22", '')
+    query = query.replace("%27", '')
+
+    return get_dict(query[2:], class_dictionary, None)
 
 
 def get_dict(query, class_dictionary, query_type):
