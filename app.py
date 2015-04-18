@@ -118,7 +118,7 @@ def create_country():
     print country
     new_country = Country(country)
     dao.create_row_in_country(new_country)
-    return dao.find_country_by_id(new_country.id)
+    return jsonify({'country': new_country.serialize(dao)})
 
 @app.route('/countries/<int:country_id>', methods=['DELETE'])
 def del_country_by_id(country_id):
@@ -192,7 +192,7 @@ def create_city():
     print city
     new_city = City(city)
     dao.create_row_in_city(new_city)
-    return find_city_by_id(new_city.id)
+    return jsonify({'city': new_city.serialize(dao)})
 
 
 @app.route('/cities/country/<int:country_id>', methods=['GET'])
@@ -312,7 +312,7 @@ def create_address():
     print address
     new_address = Address(address)
     dao.create_row_in_address(new_address)
-    return dao.find_address_by_id(new_address.id)
+    return jsonify({'address': new_address.serialize(dao)})
 
 
 @app.route('/addresses/<int:address_id>', methods=['PUT'])
@@ -430,7 +430,7 @@ def create_customer():
     print customer
     new_customer = Customer(customer)
     dao.create_row_in_customer(new_customer)
-    return dao.find_customer_by_id(new_customer.id)
+    return jsonify({'customer': new_customer.serialize(dao)})
 
 @app.route('/customers/<int:customer_id>', methods=['PUT'])
 def update_customer(customer_id):
