@@ -136,7 +136,7 @@ def update_country(country_id):
     else:
         dictionary = request.json
     #update all parameters that were sent, keep same information if a parameter has not been sent
-    country.name = dictionary.get('name', country.name)
+    country.name = dictionary.get('CountryName', country.name)
     #update on the db
     dao.update_country(country)
     #return updated object
@@ -223,8 +223,8 @@ def update_city(city_id):
     else:
         dictionary = request.json
     #update all parameters that were sent, keep same information if a parameter has not been sent
-    city.name = dictionary.get('name', city.name)
-    city.country_id = dictionary.get('country_id', city.country_id)
+    city.name = dictionary.get('CityName', city.name)
+    city.country_id = dictionary.get('CountryID', city.country_id)
     #update on the db
     dao.update_city(city)
     #return updated object
@@ -323,12 +323,12 @@ def update_address(address_id):
     else:
         dictionary = request.json
     #update all parameters that were sent, keep same information if a parameter has not been sent
-    address.address1 = dictionary.get('address1', address.address1)
-    address.address2 = dictionary.get('address2', address.address2)
-    address.district = dictionary.get('district', address.district)
-    address.postal_code = dictionary.get('postal_code', address.postal_code)
-    address.city_id = dictionary.get('city_id', address.city_id)
-    address.country_id = dictionary.get('country_id', address.country_id)
+    address.address1 = dictionary.get('Address1', address.address1)
+    address.address2 = dictionary.get('Address2', address.address2)
+    address.district = dictionary.get('District', address.district)
+    address.postal_code = dictionary.get('PostalCode', address.postal_code)
+    address.city_id = dictionary.get('CityID', address.city_id)
+    address.country_id = dictionary.get('CountryID', address.country_id)
     #update on the db
     dao.update_address(address)
     #return updated object
@@ -440,13 +440,13 @@ def update_customer(customer_id):
     else:
         dictionary = request.json
     #update all parameters that were sent, keep information same if a parameter has not been sent
-    customer.name.first = dictionary.get('first_name', customer.name.first)
-    customer.name.last = dictionary.get('last_name', customer.name.last)
-    customer.email_id = dictionary.get('email_id', customer.email_id)
-    customer.store_id = dictionary.get('store_id', customer.store_id)
-    customer.address_id = dictionary.get('address_id', customer.address_id)
-    customer.active = dictionary.get('active', customer.active)
-    customer.create_date = dictionary.get('create_date', customer.create_date)
+    customer.name.first = dictionary.get('FirstName', customer.name.first)
+    customer.name.last = dictionary.get('LastName', customer.name.last)
+    customer.email_id = dictionary.get('EmailID', customer.email_id)
+    customer.store_id = dictionary.get('StoreID', customer.store_id)
+    customer.address_id = dictionary.get('AddressID', customer.address_id)
+    customer.active = dictionary.get('Active', customer.active)
+    customer.create_date = dictionary.get('CreateDate', customer.create_date)
     #update on db
     dao.update_customer(customer)
     #return updated object
