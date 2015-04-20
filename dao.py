@@ -238,11 +238,15 @@ class Dao:
         self.cursor.close()
         self.cursor = self.conn_db()
         self.cursor.execute("UPDATE COUNTRY SET CountryName='{0}' WHERE CountryID={1}".format(country.name, country.id))
+        self.cursor.connection.commit()
+
 
     def update_city(self, city):
         self.cursor.close()
         self.cursor = self.conn_db()
         self.cursor.execute("UPDATE CITY SET CityName='{0}', CountryID={1} WHERE CityID={2}".format(city.name, city.country_id, city.id))
+        self.cursor.connection.commit()
+
 
     def update_address(self, address):
         self.cursor.close()
@@ -250,6 +254,8 @@ class Dao:
         self.cursor.execute("UPDATE ADDRESS SET Address1='{0}', Address2='{1}', District='{2}', PostalCode={3}, CityID={4},"
                             " CountryID={5} WHERE AddressID={6}".format(address.Address1, address.Address2, address.District,
                                                                         address.PostalCode, address.CityID, address.CountryID, address.id))
+        self.cursor.connection.commit()
+
     def update_customer(self, customer):
         self.cursor.close()
         self.cursor = self.conn_db()
@@ -258,7 +264,7 @@ class Dao:
                             "WHERE CustomerID={7}".format(customer.name.first, customer.name.last, customer.email_id,
                                                           customer.store_id, customer.address_id, customer.active,
                                                           customer.create_date, customer.id))
-
+        self.cursor.connection.commit()
 
     #Query methods
     def find_id_by_y(self, x, table, column, y):
